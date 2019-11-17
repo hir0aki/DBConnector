@@ -117,10 +117,16 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="exceptionAddColumnsSelect" xml:space="preserve">
+    <value>You need to add at least one value to method AddColumnsSelect or specify optional parameter allColumns as true</value>
+  </data>
   <data name="exceptionAddValueForQuery" xml:space="preserve">
     <value>You need to add at least one value to method AddValuesForQuery</value>
   </data>
   <data name="exceptionAddValueWhere" xml:space="preserve">
     <value>You need to add at least one value to method AddValuesWhere</value>
+  </data>
+  <data name="exceptionParametersNullOrEmpty" xml:space="preserve">
+    <value>Parameters can't be Null or Empty</value>
   </data>
 </root>

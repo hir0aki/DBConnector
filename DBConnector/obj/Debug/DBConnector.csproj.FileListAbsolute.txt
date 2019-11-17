@@ -5,3 +5,10 @@ C:\Users\Admin\source\repos\DBConnector\DBConnector\obj\Debug\DBConnector.dll
 C:\Users\Admin\source\repos\DBConnector\DBConnector\obj\Debug\DBConnector.pdb
 C:\Users\Admin\source\repos\DBConnector\DBConnector\obj\Debug\DBConnector.Properties.Resources.resources
 C:\Users\Admin\source\repos\DBConnector\DBConnector\obj\Debug\DBConnector.csproj.GenerateResource.cache
+C:\Users\Admin\source\repos\hir0aki\DBConnector\DBConnector\bin\Debug\DBConnector.dll
+C:\Users\Admin\source\repos\hir0aki\DBConnector\DBConnector\bin\Debug\DBConnector.pdb
+C:\Users\Admin\source\repos\hir0aki\DBConnector\DBConnector\obj\Debug\DBConnector.csprojAssemblyReference.cache
+C:\Users\Admin\source\repos\hir0aki\DBConnector\DBConnector\obj\Debug\DBConnector.Properties.Resources.resources
+C:\Users\Admin\source\repos\hir0aki\DBConnector\DBConnector\obj\Debug\DBConnector.csproj.GenerateResource.cache
+C:\Users\Admin\source\repos\hir0aki\DBConnector\DBConnector\obj\Debug\DBConnector.dll
+C:\Users\Admin\source\repos\hir0aki\DBConnector\DBConnector\obj\Debug\DBConnector.pdb

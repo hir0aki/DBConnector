@@ -61,6 +61,15 @@ namespace DBConnector.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to You need to add at least one value to method AddColumnsSelect or specify optional parameter allColumns as true.
+        /// </summary>
+        internal static string exceptionAddColumnsSelect {
+            get {
+                return ResourceManager.GetString("exceptionAddColumnsSelect", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to You need to add at least one value to method AddValuesForQuery.
         /// </summary>
         internal static string exceptionAddValueForQuery {
@@ -75,6 +84,15 @@ namespace DBConnector.Properties {
         internal static string exceptionAddValueWhere {
             get {
                 return ResourceManager.GetString("exceptionAddValueWhere", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Parameters can&apos;t be Null or Empty.
+        /// </summary>
+        internal static string exceptionParametersNullOrEmpty {
+            get {
+                return ResourceManager.GetString("exceptionParametersNullOrEmpty", resourceCulture);
             }
         }
     }

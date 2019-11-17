@@ -10,3 +10,15 @@ C:\Users\Admin\source\repos\DBConnector\Tester\obj\Debug\Tester.csproj.GenerateR
 C:\Users\Admin\source\repos\DBConnector\Tester\obj\Debug\Tester.csproj.CopyComplete
 C:\Users\Admin\source\repos\DBConnector\Tester\obj\Debug\Tester.exe
 C:\Users\Admin\source\repos\DBConnector\Tester\obj\Debug\Tester.pdb
+C:\Users\Admin\source\repos\hir0aki\DBConnector\Tester\bin\Debug\Tester.exe.config
+C:\Users\Admin\source\repos\hir0aki\DBConnector\Tester\bin\Debug\Tester.exe
+C:\Users\Admin\source\repos\hir0aki\DBConnector\Tester\bin\Debug\Tester.pdb
+C:\Users\Admin\source\repos\hir0aki\DBConnector\Tester\bin\Debug\DBConnector.dll
+C:\Users\Admin\source\repos\hir0aki\DBConnector\Tester\bin\Debug\DBConnector.pdb
+C:\Users\Admin\source\repos\hir0aki\DBConnector\Tester\obj\Debug\Tester.csprojAssemblyReference.cache
+C:\Users\Admin\source\repos\hir0aki\DBConnector\Tester\obj\Debug\Tester.Form1.resources
+C:\Users\Admin\source\repos\hir0aki\DBConnector\Tester\obj\Debug\Tester.Properties.Resources.resources
+C:\Users\Admin\source\repos\hir0aki\DBConnector\Tester\obj\Debug\Tester.csproj.GenerateResource.cache
+C:\Users\Admin\source\repos\hir0aki\DBConnector\Tester\obj\Debug\Tester.csproj.CopyComplete
+C:\Users\Admin\source\repos\hir0aki\DBConnector\Tester\obj\Debug\Tester.exe
+C:\Users\Admin\source\repos\hir0aki\DBConnector\Tester\obj\Debug\Tester.pdb
