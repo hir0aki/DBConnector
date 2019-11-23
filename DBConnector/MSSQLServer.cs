@@ -13,6 +13,7 @@ namespace DBConnector
     {
         public string ConnectionString { get; }
         public List<Values> listValuesQuery { get; }
+        public List<Values> listParametersSP { get; }
         public List<Values> listValuesWhere { get; }
         public List<string> listColumnsSelect { get; }
 
@@ -26,6 +27,7 @@ namespace DBConnector
             ConnectionString = connectionString;
             sqlcn = new SqlConnection(ConnectionString);
             listValuesQuery = new List<Values>();
+            listParametersSP = new List<Values>();
             listValuesWhere = new List<Values>();
             listColumnsSelect = new List<string>();
         }
@@ -41,6 +43,19 @@ namespace DBConnector
                 Value = value
             };
             listValuesQuery.Add(valuesQuery);
+        }
+        public void AddParameterSP(string parameterName, object value)
+        {
+            if (string.IsNullOrEmpty(parameterName?.Trim()) || value == null)
+            {
+                throw new Exception(Properties.Resources.exceptionParametersNullOrEmpty);
+            }
+            Values parameterSP = new Values
+            {
+                Name = parameterName,
+                Value = value
+            };
+            listParametersSP.Add(parameterSP);
         }
         public void AddValuesWhere(string columnName, object value)
         {
@@ -87,6 +102,40 @@ namespace DBConnector
             {
                 sqlcmd.Dispose();
                 sqlcn.Close();
+                throw new Exception(ex.Message, ex);
+            }
+        }
+
+        public int ExecuteSP(string spName)
+        {
+            if (string.IsNullOrEmpty(spName?.Trim()))
+            {
+                throw new Exception(Properties.Resources.exceptionParametersNullOrEmpty);
+            }
+            SqlCommand sqlcmd = new SqlCommand(spName, sqlcn);
+            sqlcmd.CommandType = CommandType.StoredProcedure;
+            if (sqlcn.State == ConnectionState.Open)
+            {
+                sqlcn.Close();
+            }
+            sqlcn.Open();
+            foreach (var value in listParametersSP)
+            {
+                sqlcmd.Parameters.AddWithValue($"@{value.Name}", value.Value);
+            }
+            try
+            {
+                int rowsAff = sqlcmd.ExecuteNonQuery();
+                sqlcmd.Dispose();
+                sqlcn.Close();
+                listParametersSP.Clear();
+                return rowsAff;
+            }
+            catch (Exception ex)
+            {
+                sqlcmd.Dispose();
+                sqlcn.Close();
+                listParametersSP.Clear();
                 throw new Exception(ex.Message, ex);
             }
         }

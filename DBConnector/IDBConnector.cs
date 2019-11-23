@@ -12,10 +12,12 @@ namespace DBConnector
         //Properties
         string ConnectionString { get; }
         List<Values> listValuesQuery { get; }
+        List<Values> listParametersSP { get; }
         List<Values> listValuesWhere { get; }
         List<string> listColumnsSelect { get; }
         //Methods
         int ExecuteQuery(string query);
+        int ExecuteSP(string spName);
         DataTable SelectToDataTable(string tableName, bool allColumns = false);
         DataTable SelectQueryToDataTable(string query);
         object SelectSingleValue(string tableName, string columnName, SQLFunction sqlFunction = SQLFunction.None);
@@ -25,6 +27,7 @@ namespace DBConnector
         int Update(string tableName);
         int Delete(string tableName);
         void AddValuesQuery(string columnName, object value);
+        void AddParameterSP(string parameterName, object value);
         void AddValuesWhere(string columnName, object value);
         void AddColumnsSelect(string columnName);
         void Dispose();

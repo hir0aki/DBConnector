@@ -54,13 +54,18 @@ namespace Tester
 
             //DataTable table3 = connector.SelectQueryToDataTable("SELECT * FROM BaseDeDatos ORDER BY Servidor ASC");
 
-            connector.AddValuesWhere("SECUENCIA", 789044);
-            string bomba = connector.SelectSingleValue("ConsumoGeneral", "BOMBA", SQLFunction.None).ToString();
+            //connector.AddValuesWhere("SECUENCIA", 789044);
+            //string bomba = connector.SelectSingleValue("ConsumoGeneral", "BOMBA", SQLFunction.None).ToString();
 
-            string maxSecuencia = connector.SelectSingleValue("ConsumoGeneral", "SECUENCIA", SQLFunction.MAX).ToString();
+            //string maxSecuencia = connector.SelectSingleValue("ConsumoGeneral", "SECUENCIA", SQLFunction.MAX).ToString();
 
-            connector.AddValuesWhere("DESCRIPCION", "MAGNA 32011");
-            string count = connector.SelectSingleValue("ConsumoGeneral", "DESCRIPCION", SQLFunction.COUNT).ToString();
+            //connector.AddValuesWhere("DESCRIPCION", "MAGNA 32011");
+            //string count = connector.SelectSingleValue("ConsumoGeneral", "DESCRIPCION", SQLFunction.COUNT).ToString();
+
+            connector.AddParameterSP("fechaInicio", DateTime.Now);
+            connector.AddParameterSP("fechaFinal", DateTime.Now);
+            connector.AddParameterSP("turno", 1);
+            int rowsAff = connector.ExecuteSP("sp_CorteHistorico");
 
             connector.Dispose();
         }
