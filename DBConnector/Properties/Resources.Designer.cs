@@ -70,6 +70,15 @@ namespace DBConnector.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to You need to add at least one query to method AddQuerySQLTransaction.
+        /// </summary>
+        internal static string exceptionAddQuerySQLTransaction {
+            get {
+                return ResourceManager.GetString("exceptionAddQuerySQLTransaction", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to You need to add at least one value to method AddValuesForQuery.
         /// </summary>
         internal static string exceptionAddValueForQuery {

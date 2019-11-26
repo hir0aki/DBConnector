@@ -14,8 +14,9 @@ namespace DBConnector
         public string ConnectionString { get; }
         public List<Values> listValuesQuery { get; }
         public List<Values> listParametersSP { get; }
-        public List<Values> listValuesWhere { get; }
+        public List<ValuesWhere> listValuesWhere { get; }
         public List<string> listColumnsSelect { get; }
+        public List<string> listQuerysTransaction { get; }
 
         private IntPtr nativeResource = Marshal.AllocHGlobal(100);
         private SqlConnection sqlcn;
@@ -28,8 +29,9 @@ namespace DBConnector
             sqlcn = new SqlConnection(ConnectionString);
             listValuesQuery = new List<Values>();
             listParametersSP = new List<Values>();
-            listValuesWhere = new List<Values>();
+            listValuesWhere = new List<ValuesWhere>();
             listColumnsSelect = new List<string>();
+            listQuerysTransaction = new List<string>();
         }
         public void AddValuesQuery(string columnName, object value)
         {
@@ -57,16 +59,18 @@ namespace DBConnector
             };
             listParametersSP.Add(parameterSP);
         }
-        public void AddValuesWhere(string columnName, object value)
+        public void AddValuesWhere(string columnName, SQLComparisonOperator sqlComparisonOperator, object value, string parameterName = "")
         {
-            if (string.IsNullOrEmpty(columnName?.Trim()) || value == null)
+            if (string.IsNullOrEmpty(columnName?.Trim()) || value == null || sqlComparisonOperator == null)
             {
                 throw new Exception(Properties.Resources.exceptionParametersNullOrEmpty);
             }
-            Values valuesWhere = new Values
+            ValuesWhere valuesWhere = new ValuesWhere
             {
                 Name = columnName,
-                Value = value
+                Value = value,
+                SQLComparisonOperator = sqlComparisonOperator,
+                ParameterName = (string.IsNullOrEmpty(parameterName?.Trim()) ? columnName : parameterName)
             };
             listValuesWhere.Add(valuesWhere);
         }
@@ -77,6 +81,14 @@ namespace DBConnector
                 throw new Exception(Properties.Resources.exceptionParametersNullOrEmpty);
             }
             listColumnsSelect.Add(columnName);
+        }
+        public void AddQuerySQLTransaction(string query)
+        {
+            if (string.IsNullOrEmpty(query?.Trim()))
+            {
+                throw new Exception(Properties.Resources.exceptionParametersNullOrEmpty);
+            }
+            listQuerysTransaction.Add(query);
         }
 
         public int ExecuteQuery(string query)
@@ -139,7 +151,58 @@ namespace DBConnector
                 throw new Exception(ex.Message, ex);
             }
         }
-        public DataTable SelectToDataTable(string tableName, bool allColumns = false)
+        public bool ExecuteSQLTransactions()
+        {
+            if (listQuerysTransaction.Count == 0)
+            {
+                throw new Exception(Properties.Resources.exceptionAddQuerySQLTransaction);
+            }
+            if (sqlcn.State == ConnectionState.Open)
+            {
+                sqlcn.Close();
+            }
+            sqlcn.Open();
+            SqlCommand sqlcmd = new SqlCommand();
+            sqlcmd.Connection = sqlcn;
+            SqlTransaction sqlTransaction;
+            sqlTransaction = sqlcn.BeginTransaction();
+            sqlcmd.Transaction = sqlTransaction;
+            try
+            {
+                foreach (string query in listQuerysTransaction)
+                {
+                    sqlcmd.CommandText = query;
+                    sqlcmd.ExecuteNonQuery();
+                }
+                sqlTransaction.Commit();
+                sqlTransaction.Dispose();
+                sqlcmd.Dispose();
+                sqlcn.Close();
+                listQuerysTransaction.Clear();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                try
+                {
+                    sqlTransaction.Rollback();
+                }
+                catch (Exception ex2)
+                {
+                    sqlTransaction.Dispose();
+                    sqlcmd.Dispose();
+                    sqlcn.Close();
+                    listQuerysTransaction.Clear();
+                    throw new Exception(ex2.Message, ex2);
+                }
+                sqlTransaction.Dispose();
+                sqlcmd.Dispose();
+                sqlcn.Close();
+                listQuerysTransaction.Clear();
+                throw new Exception(ex.Message, ex);
+            }
+        }
+        public DataTable SelectToDataTable(string tableName, bool allColumns = false, SQLOrderBy orderBy = SQLOrderBy.None, string orderByColumnName = "")
         {
             if (string.IsNullOrEmpty(tableName?.Trim()))
             {
@@ -151,6 +214,10 @@ namespace DBConnector
                 {
                     throw new Exception(Properties.Resources.exceptionAddColumnsSelect);
                 }
+            }
+            if (orderBy != SQLOrderBy.None && string.IsNullOrEmpty(orderByColumnName?.Trim()))
+            {
+                throw new Exception(Properties.Resources.exceptionParametersNullOrEmpty);
             }
             SqlCommand sqlcmd = new SqlCommand();
             sqlcmd.Connection = sqlcn;
@@ -173,10 +240,24 @@ namespace DBConnector
                 sqlQuery.Append(" WHERE ");
                 foreach (var value in listValuesWhere)
                 {
-                    sqlQuery.Append($"{value.Name} = @{value.Name} AND ");
-                    sqlcmd.Parameters.AddWithValue($"@{value.Name}", value.Value);
+                    //string prefix = (value.SQLComparisonOperator != SQLComparisonOperator.Like) ? "@" : string.Empty;
+                    sqlQuery.Append($"{value.Name} {value.SQLComparisonOperator} @{value.ParameterName} AND ");
+                    sqlcmd.Parameters.AddWithValue($"@{value.ParameterName}", value.Value);
                 }
                 sqlQuery.Replace(" AND ", string.Empty, sqlQuery.Length - 5, 5);
+            }
+            switch (orderBy)
+            {
+                case SQLOrderBy.None:
+                    break;
+                case SQLOrderBy.ASC:
+                    sqlQuery.Append($" ORDER BY {orderByColumnName} ASC");
+                    break;
+                case SQLOrderBy.DESC:
+                    sqlQuery.Append($" ORDER BY {orderByColumnName} DESC");
+                    break;
+                default:
+                    break;
             }
             sqlcmd.CommandText = sqlQuery.ToString();
             SqlDataAdapter sqlDataAdapter = new SqlDataAdapter(sqlcmd);
@@ -236,13 +317,22 @@ namespace DBConnector
             switch (sqlFunction)
             {
                 case SQLFunction.None:
-                    sqlQuery.Append($"{columnName}");
+                    sqlQuery.Append($"TOP 1 {columnName}");
                     break;
                 case SQLFunction.MAX:
                     sqlQuery.Append($"ISNULL(MAX({columnName}),0)");
                     break;
+                case SQLFunction.MIN:
+                    sqlQuery.Append($"ISNULL(MIN({columnName}),0)");
+                    break;
                 case SQLFunction.COUNT:
                     sqlQuery.Append($"COUNT({columnName})");
+                    break;
+                case SQLFunction.SUM:
+                    sqlQuery.Append($"SUM({columnName})");
+                    break;
+                case SQLFunction.AVG:
+                    sqlQuery.Append($"AVG({columnName})");
                     break;
                 default:
                     sqlQuery.Append($"{columnName}");
@@ -254,8 +344,8 @@ namespace DBConnector
                 sqlQuery.Append(" WHERE ");
                 foreach (var value in listValuesWhere)
                 {
-                    sqlQuery.Append($"{value.Name} = @{value.Name} AND ");
-                    sqlcmd.Parameters.AddWithValue($"@{value.Name}", value.Value);
+                    sqlQuery.Append($"{value.Name} {value.SQLComparisonOperator} @{value.ParameterName} AND ");
+                    sqlcmd.Parameters.AddWithValue($"@{value.ParameterName}", value.Value);
                 }
                 sqlQuery.Replace(" AND ", string.Empty, sqlQuery.Length - 5, 5);
             }
@@ -434,8 +524,8 @@ namespace DBConnector
             sqlQuery.Append(" WHERE ");
             foreach (var value in listValuesWhere)
             {
-                sqlQuery.Append($"{value.Name} = @{value.Name} AND ");
-                sqlcmd.Parameters.AddWithValue($"@{value.Name}", value.Value);
+                sqlQuery.Append($"{value.Name} {value.SQLComparisonOperator} @{value.ParameterName} AND ");
+                sqlcmd.Parameters.AddWithValue($"@{value.ParameterName}", value.Value);
             }
             sqlQuery.Replace(" AND ", string.Empty, sqlQuery.Length - 5, 5);
             sqlcmd.CommandText = sqlQuery.ToString();
@@ -478,8 +568,8 @@ namespace DBConnector
             StringBuilder sqlQuery = new StringBuilder($"DELETE {tableName} WHERE ");
             foreach (var value in listValuesWhere)
             {
-                sqlQuery.Append($"{value.Name} = @{value.Name} AND ");
-                sqlcmd.Parameters.AddWithValue($"@{value.Name}", value.Value);
+                sqlQuery.Append($"{value.Name} {value.SQLComparisonOperator} @{value.ParameterName} AND ");
+                sqlcmd.Parameters.AddWithValue($"@{value.ParameterName}", value.Value);
             }
             sqlQuery.Replace(" AND ", string.Empty, sqlQuery.Length - 5, 5);
             sqlcmd.CommandText = sqlQuery.ToString();

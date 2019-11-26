@@ -120,6 +120,9 @@
   <data name="exceptionAddColumnsSelect" xml:space="preserve">
     <value>You need to add at least one value to method AddColumnsSelect or specify optional parameter allColumns as true</value>
   </data>
+  <data name="exceptionAddQuerySQLTransaction" xml:space="preserve">
+    <value>You need to add at least one query to method AddQuerySQLTransaction</value>
+  </data>
   <data name="exceptionAddValueForQuery" xml:space="preserve">
     <value>You need to add at least one value to method AddValuesForQuery</value>
   </data>
