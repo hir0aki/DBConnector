@@ -22,3 +22,8 @@ C:\Users\Admin\source\repos\hir0aki\DBConnector\Tester\obj\Debug\Tester.csproj.G
 C:\Users\Admin\source\repos\hir0aki\DBConnector\Tester\obj\Debug\Tester.csproj.CopyComplete
 C:\Users\Admin\source\repos\hir0aki\DBConnector\Tester\obj\Debug\Tester.exe
 C:\Users\Admin\source\repos\hir0aki\DBConnector\Tester\obj\Debug\Tester.pdb
+C:\Users\Admin\source\repos\hir0aki\DBConnector\Tester\bin\Debug\MySql.Data.dll
+C:\Users\Admin\source\repos\hir0aki\DBConnector\Tester\bin\Debug\Google.Protobuf.dll
+C:\Users\Admin\source\repos\hir0aki\DBConnector\Tester\bin\Debug\BouncyCastle.Crypto.dll
+C:\Users\Admin\source\repos\hir0aki\DBConnector\Tester\bin\Debug\Renci.SshNet.dll
+C:\Users\Admin\source\repos\hir0aki\DBConnector\Tester\bin\Debug\MySql.Data.xml

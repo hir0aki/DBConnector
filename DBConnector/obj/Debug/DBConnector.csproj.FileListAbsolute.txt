@@ -13,3 +13,9 @@ C:\Users\Admin\source\repos\hir0aki\DBConnector\DBConnector\obj\Debug\DBConnecto
 C:\Users\Admin\source\repos\hir0aki\DBConnector\DBConnector\obj\Debug\DBConnector.dll
 C:\Users\Admin\source\repos\hir0aki\DBConnector\DBConnector\obj\Debug\DBConnector.pdb
 C:\Users\Admin\source\repos\hir0aki\DBConnector\DBConnector\obj\Debug\DBConnector.frmDebug.resources
+C:\Users\Admin\source\repos\hir0aki\DBConnector\DBConnector\bin\Debug\MySql.Data.dll
+C:\Users\Admin\source\repos\hir0aki\DBConnector\DBConnector\bin\Debug\Google.Protobuf.dll
+C:\Users\Admin\source\repos\hir0aki\DBConnector\DBConnector\bin\Debug\BouncyCastle.Crypto.dll
+C:\Users\Admin\source\repos\hir0aki\DBConnector\DBConnector\bin\Debug\Renci.SshNet.dll
+C:\Users\Admin\source\repos\hir0aki\DBConnector\DBConnector\bin\Debug\MySql.Data.xml
+C:\Users\Admin\source\repos\hir0aki\DBConnector\DBConnector\obj\Debug\DBConnector.csproj.CopyComplete

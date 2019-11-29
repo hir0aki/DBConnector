@@ -1,7 +1,7 @@
-﻿using System;
+﻿using MySql.Data.MySqlClient;
+using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.Odbc;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -10,7 +10,7 @@ using System.Windows.Forms;
 
 namespace DBConnector
 {
-    public class OdbcConn : IDBConnector, IDisposable
+    public class MySqlConnector : IDBConnector, IDisposable
     {
         private string _connectionString;
         private bool _activeTransaction = false;
@@ -20,15 +20,15 @@ namespace DBConnector
         private List<string> listColumnsSelect;
         private List<string> listQuerysTransaction;
         private IntPtr nativeResource = Marshal.AllocHGlobal(100);
-        private OdbcConnection sqlcn;
+        private MySqlConnection sqlcn;
         private DataTable dataTable;
-        private OdbcTransaction _sqlTransactionGlobal;
+        private MySqlTransaction _sqlTransactionGlobal;
         public bool Debug { get; set; } = false;
 
-        public OdbcConn(string connectionString)
+        public MySqlConnector(string connectionString)
         {
             _connectionString = connectionString;
-            sqlcn = new OdbcConnection(_connectionString);
+            sqlcn = new MySqlConnection(_connectionString);
             listValuesQuery = new List<Values>();
             listParametersSP = new List<Values>();
             listValuesWhere = new List<ValuesWhere>();
@@ -97,7 +97,6 @@ namespace DBConnector
             listValuesWhere.Add(valuesWhere);
         }
 
-        
         public int Delete(string tableName)
         {
             if (string.IsNullOrEmpty(tableName?.Trim()))
@@ -108,12 +107,12 @@ namespace DBConnector
             {
                 throw new Exception(Properties.Resources.exceptionAddValueWhere);
             }
-            OdbcCommand sqlcmd = new OdbcCommand();
+            MySqlCommand sqlcmd = new MySqlCommand();
             sqlcmd.Connection = sqlcn;
-            StringBuilder sqlQuery = new StringBuilder($"DELETE {tableName} WHERE ");
+            StringBuilder sqlQuery = new StringBuilder($"DELETE FROM {tableName} WHERE ");
             foreach (var value in listValuesWhere)
             {
-                sqlQuery.Append($"{value.Name} {value.SQLComparisonOperator} ? AND ");
+                sqlQuery.Append($"{value.Name} {value.SQLComparisonOperator} @{value.ParameterName} AND ");
                 sqlcmd.Parameters.AddWithValue($"@{value.ParameterName}", value.Value);
             }
             sqlQuery.Replace(" AND ", string.Empty, sqlQuery.Length - 5, 5);
@@ -161,7 +160,7 @@ namespace DBConnector
             {
                 throw new Exception(Properties.Resources.exceptionParametersNullOrEmpty);
             }
-            OdbcCommand sqlcmd = new OdbcCommand(query, sqlcn);
+            MySqlCommand sqlcmd = new MySqlCommand(query, sqlcn);
             if (_activeTransaction)
             {
                 sqlcmd.Transaction = _sqlTransactionGlobal;
@@ -197,14 +196,7 @@ namespace DBConnector
             {
                 throw new Exception(Properties.Resources.exceptionParametersNullOrEmpty);
             }
-            StringBuilder querySp = new StringBuilder("{CALL " + spName + "(");
-            foreach (var value in listParametersSP)
-            {
-                querySp.Append("?,");
-            }
-            querySp.Replace(",", string.Empty, querySp.Length - 1, 1);
-            querySp.Append(")}");
-            OdbcCommand sqlcmd = new OdbcCommand(querySp.ToString(), sqlcn);
+            MySqlCommand sqlcmd = new MySqlCommand(spName, sqlcn);
             sqlcmd.CommandType = CommandType.StoredProcedure;
             if (_activeTransaction)
             {
@@ -254,9 +246,9 @@ namespace DBConnector
                 throw new Exception(Properties.Resources.exceptionAddQuerySQLTransaction);
             }
             sqlcn.Open();
-            OdbcCommand sqlcmd = new OdbcCommand();
+            MySqlCommand sqlcmd = new MySqlCommand();
             sqlcmd.Connection = sqlcn;
-            OdbcTransaction sqlTransaction;
+            MySqlTransaction sqlTransaction;
             sqlTransaction = sqlcn.BeginTransaction();
             sqlcmd.Transaction = sqlTransaction;
             try
@@ -305,14 +297,14 @@ namespace DBConnector
             {
                 throw new Exception(Properties.Resources.exceptionAddValueForQuery);
             }
-            OdbcCommand sqlcmd = new OdbcCommand();
+            MySqlCommand sqlcmd = new MySqlCommand();
             sqlcmd.Connection = sqlcn;
             StringBuilder sqlQuery = new StringBuilder($"INSERT INTO {tableName} (");
             StringBuilder valuesStr = new StringBuilder(") VALUES (");
             foreach (var value in listValuesQuery)
             {
                 sqlQuery.Append($"{value.Name},");
-                valuesStr.Append($"?,");
+                valuesStr.Append($"@{value.Name},");
                 sqlcmd.Parameters.AddWithValue($"@{value.Name}", value.Value);
             }
             sqlQuery.Replace(",", string.Empty, sqlQuery.Length - 1, 1);
@@ -366,7 +358,7 @@ namespace DBConnector
 
         public string InsertWithIdentityReturn(string tableName, string identityColumn)
         {
-            if (string.IsNullOrEmpty(tableName?.Trim()) || string.IsNullOrEmpty(identityColumn?.Trim()))
+            if (string.IsNullOrEmpty(tableName?.Trim()))
             {
                 throw new Exception(Properties.Resources.exceptionParametersNullOrEmpty);
             }
@@ -374,19 +366,19 @@ namespace DBConnector
             {
                 throw new Exception(Properties.Resources.exceptionAddValueForQuery);
             }
-            OdbcCommand sqlcmd = new OdbcCommand();
+            MySqlCommand sqlcmd = new MySqlCommand();
             sqlcmd.Connection = sqlcn;
             StringBuilder sqlQuery = new StringBuilder($"INSERT INTO {tableName} (");
-            StringBuilder valuesStr = new StringBuilder($") OUTPUT INSERTED.{identityColumn} VALUES (");
+            StringBuilder valuesStr = new StringBuilder($") VALUES (");
             foreach (var value in listValuesQuery)
             {
                 sqlQuery.Append($"{value.Name},");
-                valuesStr.Append($"?,");
+                valuesStr.Append($"@{value.Name},");
                 sqlcmd.Parameters.AddWithValue($"@{value.Name}", value.Value);
             }
             sqlQuery.Replace(",", string.Empty, sqlQuery.Length - 1, 1);
             valuesStr.Replace(",", string.Empty, valuesStr.Length - 1, 1);
-            valuesStr.Append(")");
+            valuesStr.Append(");SELECT LAST_INSERT_ID();");
             sqlQuery.Append(valuesStr);
             sqlcmd.CommandText = sqlQuery.ToString();
             if (_activeTransaction)
@@ -425,14 +417,15 @@ namespace DBConnector
                 throw new Exception(ex.Message, ex);
             }
         }
-       
+        
+
         public object SelectQuerySingleValue(string query)
         {
             if (string.IsNullOrEmpty(query?.Trim()))
             {
                 throw new Exception(Properties.Resources.exceptionParametersNullOrEmpty);
             }
-            OdbcCommand sqlcmd = new OdbcCommand(query, sqlcn);
+            MySqlCommand sqlcmd = new MySqlCommand(query, sqlcn);
             if (_activeTransaction)
             {
                 sqlcmd.Transaction = _sqlTransactionGlobal;
@@ -468,8 +461,8 @@ namespace DBConnector
             {
                 throw new Exception(Properties.Resources.exceptionParametersNullOrEmpty);
             }
-            OdbcCommand sqlcmd = new OdbcCommand(query, sqlcn);
-            OdbcDataAdapter sqlDataAdapter = new OdbcDataAdapter(sqlcmd);
+            MySqlCommand sqlcmd = new MySqlCommand(query, sqlcn);
+            MySqlDataAdapter sqlDataAdapter = new MySqlDataAdapter(sqlcmd);
             dataTable = new DataTable();
             try
             {
@@ -492,7 +485,7 @@ namespace DBConnector
             {
                 throw new Exception(Properties.Resources.exceptionParametersNullOrEmpty);
             }
-            OdbcCommand sqlcmd = new OdbcCommand();
+            MySqlCommand sqlcmd = new MySqlCommand();
             sqlcmd.Connection = sqlcn;
             StringBuilder sqlQuery = new StringBuilder("SELECT ");
             switch (sqlFunction)
@@ -525,7 +518,7 @@ namespace DBConnector
                 sqlQuery.Append(" WHERE ");
                 foreach (var value in listValuesWhere)
                 {
-                    sqlQuery.Append($"{value.Name} {value.SQLComparisonOperator} ? AND ");
+                    sqlQuery.Append($"{value.Name} {value.SQLComparisonOperator} @{value.ParameterName} AND ");
                     sqlcmd.Parameters.AddWithValue($"@{value.ParameterName}", value.Value);
                 }
                 sqlQuery.Replace(" AND ", string.Empty, sqlQuery.Length - 5, 5);
@@ -585,7 +578,7 @@ namespace DBConnector
             {
                 throw new Exception(Properties.Resources.exceptionParametersNullOrEmpty);
             }
-            OdbcCommand sqlcmd = new OdbcCommand();
+            MySqlCommand sqlcmd = new MySqlCommand();
             sqlcmd.Connection = sqlcn;
             StringBuilder sqlQuery = new StringBuilder("SELECT ");
             if (top > 0)
@@ -611,7 +604,7 @@ namespace DBConnector
                 foreach (var value in listValuesWhere)
                 {
                     //string prefix = (value.SQLComparisonOperator != SQLComparisonOperator.Like) ? "@" : string.Empty;
-                    sqlQuery.Append($"{value.Name} {value.SQLComparisonOperator} ? AND ");
+                    sqlQuery.Append($"{value.Name} {value.SQLComparisonOperator} @{value.ParameterName} AND ");
                     sqlcmd.Parameters.AddWithValue($"@{value.ParameterName}", value.Value);
                 }
                 sqlQuery.Replace(" AND ", string.Empty, sqlQuery.Length - 5, 5);
@@ -634,7 +627,7 @@ namespace DBConnector
                     break;
             }
             sqlcmd.CommandText = sqlQuery.ToString();
-            OdbcDataAdapter sqlDataAdapter = new OdbcDataAdapter(sqlcmd);
+            MySqlDataAdapter sqlDataAdapter = new MySqlDataAdapter(sqlcmd);
             dataTable = new DataTable();
             try
             {
@@ -675,12 +668,12 @@ namespace DBConnector
             {
                 throw new Exception(Properties.Resources.exceptionAddValueWhere);
             }
-            OdbcCommand sqlcmd = new OdbcCommand();
+            MySqlCommand sqlcmd = new MySqlCommand();
             sqlcmd.Connection = sqlcn;
             StringBuilder sqlQuery = new StringBuilder($"UPDATE {tableName} SET ");
             foreach (var value in listValuesQuery)
             {
-                sqlQuery.Append($"{value.Name} = ?,");
+                sqlQuery.Append($"{value.Name} = @{value.Name},");
                 sqlcmd.Parameters.AddWithValue($"@{value.Name}", value.Value);
             }
             sqlQuery.Replace(",", string.Empty, sqlQuery.Length - 1, 1);
@@ -761,21 +754,21 @@ namespace DBConnector
             if (disposing)
             {
                 // free managed resources
-                //if (sqlcn != null)
-                //{
-                //    sqlcn.Dispose();
-                //    sqlcn = null;
-                //}
-                //if (dataTable != null)
-                //{
-                //    dataTable.Dispose();
-                //    dataTable = null;
-                //}
-                //if (_sqlTransactionGlobal != null)
-                //{
-                //    _sqlTransactionGlobal.Dispose();
-                //    _sqlTransactionGlobal = null;
-                //}
+                if (sqlcn != null)
+                {
+                    sqlcn.Dispose();
+                    sqlcn = null;
+                }
+                if (dataTable != null)
+                {
+                    dataTable.Dispose();
+                    dataTable = null;
+                }
+                if (_sqlTransactionGlobal != null)
+                {
+                    _sqlTransactionGlobal.Dispose();
+                    _sqlTransactionGlobal = null;
+                }
             }
             // free native resources if there are any.
             if (nativeResource != IntPtr.Zero)

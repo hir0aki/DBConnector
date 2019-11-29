@@ -21,17 +21,18 @@ namespace Tester
 
         private void button1_Click(object sender, EventArgs e)
         {
-            DBConnectionType dBConnectionType = DBConnectionType.ODBCSql;
+            DBConnectionType dBConnectionType = DBConnectionType.MySql;
 
             switch (dBConnectionType)
             {
                 case DBConnectionType.SQLServer:
-                    connector = new MSSQLServer("Server=127.0.0.1;Database=PS2;User Id=ps2;Password=;");
+                    connector = new MSSQLServerConnector("Server=127.0.0.1;Database=PS2;User Id=ps2;Password=;");
                     break;
                 case DBConnectionType.ODBCSql:
-                    connector = new OdbcConn("Dsn=PS2;uid=ps2");
+                    connector = new OdbcConnector("Dsn=PS2;uid=ps2");
                     break;
                 case DBConnectionType.MySql:
+                    connector = new MySqlConnector("Server=127.0.0.1;Database=ps3;Uid=ps3;Pwd=Seccionr3d;");
                     break;
                 default:
                     break;
@@ -40,11 +41,11 @@ namespace Tester
             connector.Debug = true;
             //int rowsAff = connector.ExecuteQuery("DELETE BaseDeDatos");
 
-            connector.AddValuesQuery("Servidor", "SERVER");
-            connector.AddValuesQuery("Usuario", "User");
-            connector.AddValuesQuery("Password", "PAss");
-            connector.AddValuesQuery("BaseDeDatos", "DB");
-            string insertedId = connector.InsertWithIdentityReturn("BaseDeDatos", "Servidor");
+            //connector.AddValuesQuery("Servidor", "SERVER");
+            //connector.AddValuesQuery("Usuario", "User");
+            //connector.AddValuesQuery("Password", "PAss");
+            //connector.AddValuesQuery("BaseDeDatos", "DB");
+            //string insertedId = connector.InsertWithIdentityReturn("BaseDeDatos", "Servidor");
 
             //connector.AddValuesQuery("Servidor", "127.0.0.1");
             //connector.AddValuesQuery("Usuario", "ps2");
@@ -101,36 +102,36 @@ namespace Tester
             //connector.AddQuerySQLTransaction("DELETE BaseDeDatos WHERE Servidor = 'MAQUINA1'");
             //bool transactions = connector.ExecuteSQLTransactions();
 
-            //try
-            //{
-            //    connector.BeginTransaction();
+            try
+            {
+                connector.BeginTransaction();
 
-            //    connector.AddValuesQuery("Servidor", "MAQUINA1");
-            //    connector.AddValuesQuery("Usuario", "User");
-            //    connector.AddValuesQuery("Password", "Pass");
-            //    connector.AddValuesQuery("BaseDeDatos", "PS3");
-            //    connector.Insert("BaseDeDatos");
+                //connector.AddValuesQuery("Servidor", "MAQUINA1");
+                //connector.AddValuesQuery("Usuario", "User");
+                //connector.AddValuesQuery("Password", "Pass");
+                //connector.AddValuesQuery("BaseDeDatos", "PS3");
+                //connector.Insert("BaseDeDatos");
 
-            //    connector.AddValuesQuery("Servidor", "MAQUINA2");
-            //    connector.AddValuesQuery("Usuario", "User2");
-            //    connector.AddValuesQuery("Password", "Pass2");
-            //    connector.AddValuesQuery("BaseDeDatos", "PS3");
-            //    connector.Insert("BaseDeDatos");
+                //connector.AddValuesQuery("Servidor", "MAQUINA2");
+                //connector.AddValuesQuery("Usuario", "User2");
+                //connector.AddValuesQuery("Password", "Pass2");
+                //connector.AddValuesQuery("BaseDeDatos", "PS3");
+                //connector.Insert("BaseDeDatos");
 
-            //    //connector.AddValuesQuery("Servidor", "MAQUINA3");
-            //    //connector.AddValuesWhere("Servidor", SQLComparisonOperator.EqualTo, "MAQUINA2", "nServidor");
-            //    //connector.Update("BaseDeDatos");
+                //connector.AddValuesQuery("Servidor", "MAQUINA3");
+                //connector.AddValuesWhere("Servidor", SQLComparisonOperator.EqualTo, "MAQUINA2", "nServidor");
+                //connector.Update("BaseDeDatos");
 
-            //    //connector.AddValuesWhere("Servidor", SQLComparisonOperator.EqualTo, "MAQUINA1");
-            //    //connector.Delete("BaseDeDatos");
+                //connector.AddValuesWhere("Servidor", SQLComparisonOperator.EqualTo, "MAQUINA1");
+                //connector.Delete("BaseDeDatos");
 
-            //    connector.CommitTransaction();
-            //}
-            //catch (Exception ex)
-            //{
-            //    connector.RollbackTransaction();
-            //    MessageBox.Show(ex.Message);
-            //}
+                connector.CommitTransaction();
+            }
+            catch (Exception ex)
+            {
+                connector.RollbackTransaction();
+                MessageBox.Show(ex.Message);
+            }
 
             connector.Dispose();
         }

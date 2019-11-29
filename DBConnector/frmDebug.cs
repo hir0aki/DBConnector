@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MySql.Data.MySqlClient;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -36,6 +37,16 @@ namespace DBConnector
                     txtQuery.Text = sqlcmd.CommandText;
 
                     foreach (OdbcParameter parameter in sqlcmd.Parameters)
+                    {
+                        dataGridViewParameters.Rows.Add(parameter.ParameterName, parameter.Value.ToString());
+                    }
+                }
+                else if (commandObj is MySqlCommand)
+                {
+                    MySqlCommand sqlcmd = commandObj as MySqlCommand;
+                    txtQuery.Text = sqlcmd.CommandText;
+
+                    foreach (MySqlParameter parameter in sqlcmd.Parameters)
                     {
                         dataGridViewParameters.Rows.Add(parameter.ParameterName, parameter.Value.ToString());
                     }

@@ -10,7 +10,7 @@ using System.Windows.Forms;
 
 namespace DBConnector
 {
-    public class MSSQLServer : IDBConnector, IDisposable
+    public class MSSQLServerConnector : IDBConnector, IDisposable
     {
         private string _connectionString;
         private bool _activeTransaction = false;
@@ -26,7 +26,7 @@ namespace DBConnector
 
         public bool Debug { get; set; } = false;
 
-        public MSSQLServer(string connectionString)
+        public MSSQLServerConnector(string connectionString)
         {
             _connectionString = connectionString;
             sqlcn = new SqlConnection(_connectionString);
@@ -773,7 +773,5 @@ namespace DBConnector
                 nativeResource = IntPtr.Zero;
             }
         }
-
-        
     }
 }
