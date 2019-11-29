@@ -10,17 +10,12 @@ namespace DBConnector
     public interface IDBConnector
     {
         //Properties
-        string ConnectionString { get; }
-        List<Values> listValuesQuery { get; }
-        List<Values> listParametersSP { get; }
-        List<ValuesWhere> listValuesWhere { get; }
-        List<string> listColumnsSelect { get; }
-        List<string> listQuerysTransaction { get; }
+        bool Debug { get; set; }
         //Methods
         int ExecuteQuery(string query);
         int ExecuteSP(string spName);
         bool ExecuteSQLTransactions();
-        DataTable SelectToDataTable(string tableName, bool allColumns = false, SQLOrderBy orderBy = SQLOrderBy.None, string orderByColumnName = "");
+        DataTable SelectToDataTable(string tableName, bool allColumns = false, int top = 0, string groupByColumnName = "", SQLOrderBy orderBy = SQLOrderBy.None, string orderByColumnName = "");
         DataTable SelectQueryToDataTable(string query);
         object SelectSingleValue(string tableName, string columnName, SQLFunction sqlFunction = SQLFunction.None);
         object SelectQuerySingleValue(string query);
@@ -35,6 +30,10 @@ namespace DBConnector
         void AddColumnsSelect(string columnName);
         void AddQuerySQLTransaction(string query);
         void Dispose();
+        //Transaction Methods
+        void BeginTransaction();
+        void CommitTransaction();
+        void RollbackTransaction();
     }
 
     public class Values
@@ -53,7 +52,8 @@ namespace DBConnector
 
     public enum DBConnectionType : int
     {
-        SQLServer = 1,
+        SQLServer = 0,
+        ODBCSql = 1,
         MySql = 2
     };
 

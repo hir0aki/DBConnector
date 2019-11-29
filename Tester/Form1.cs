@@ -21,15 +21,30 @@ namespace Tester
 
         private void button1_Click(object sender, EventArgs e)
         {
-            connector = new MSSQLServer("Server=127.0.0.1;Database=PS2;User Id=ps2;Password=;");
+            DBConnectionType dBConnectionType = DBConnectionType.ODBCSql;
 
+            switch (dBConnectionType)
+            {
+                case DBConnectionType.SQLServer:
+                    connector = new MSSQLServer("Server=127.0.0.1;Database=PS2;User Id=ps2;Password=;");
+                    break;
+                case DBConnectionType.ODBCSql:
+                    connector = new OdbcConn("Dsn=PS2;uid=ps2");
+                    break;
+                case DBConnectionType.MySql:
+                    break;
+                default:
+                    break;
+            }
+            
+            connector.Debug = true;
             //int rowsAff = connector.ExecuteQuery("DELETE BaseDeDatos");
 
-            //connector.AddValuesQuery("Servidor", "SERVER");
-            //connector.AddValuesQuery("Usuario", "User");
-            //connector.AddValuesQuery("Password", "PAss");
-            //connector.AddValuesQuery("BaseDeDatos", "DB");
-            //bool insert = connector.Insert("BaseDeDatos");
+            connector.AddValuesQuery("Servidor", "SERVER");
+            connector.AddValuesQuery("Usuario", "User");
+            connector.AddValuesQuery("Password", "PAss");
+            connector.AddValuesQuery("BaseDeDatos", "DB");
+            string insertedId = connector.InsertWithIdentityReturn("BaseDeDatos", "Servidor");
 
             //connector.AddValuesQuery("Servidor", "127.0.0.1");
             //connector.AddValuesQuery("Usuario", "ps2");
@@ -53,11 +68,13 @@ namespace Tester
             //connector.AddValuesWhere("Servidor", SQLComparisonOperator.Like, "%S%");
             //DataTable tableLike = connector.SelectToDataTable("BaseDeDatos", true);
 
-            //connector.AddValuesWhere("FECHACARGA", SQLComparisonOperator.GreaterThanOrEqualTo, new DateTime(2019,09,01));
+            //connector.AddValuesWhere("FECHACARGA", SQLComparisonOperator.GreaterThanOrEqualTo, new DateTime(2019, 09, 01));
             //connector.AddValuesWhere("FECHACARGA", SQLComparisonOperator.LessThanOrEqualTo, DateTime.Now, "fechaFin");
-            //DataTable tableVentas = connector.SelectToDataTable("ConsumoGeneral", true, SQLOrderBy.DESC, "FECHACARGA");
+            //DataTable tableVentas = connector.SelectToDataTable("ConsumoGeneral", true, orderBy: SQLOrderBy.DESC, orderByColumnName: "FECHACARGA");
 
             //DataTable table2 = connector.SelectToDataTable("BaseDeDatos", true);
+
+            //DataTable table4 = connector.SelectToDataTable("BaseDeDatos", true, 10);
 
             //DataTable table3 = connector.SelectQueryToDataTable("SELECT * FROM BaseDeDatos ORDER BY Servidor ASC");
 
@@ -78,13 +95,42 @@ namespace Tester
             //connector.AddParameterSP("turno", 1);
             //int rowsAff = connector.ExecuteSP("sp_CorteHistorico");
 
-            connector.AddQuerySQLTransaction("INSERT INTO BaseDeDatos VALUES ('MAQUINA1', 'User', 'Pass', 'PS2')");
-            connector.AddQuerySQLTransaction("INSERT INTO BaseDeDatos VALUES (MAQUINA2, 'User2', 'Pass2', 'PS3')");
-            connector.AddQuerySQLTransaction("UPDATE BaseDeDatos SET Servidor = 'MAQUINA3' WHERE Servidor = 'MAQUINA2'");
-            connector.AddQuerySQLTransaction("DELETE BaseDeDatos WHERE Servidor = 'MAQUINA1'");
-            bool transactions = connector.ExecuteSQLTransactions();
+            //connector.AddQuerySQLTransaction("INSERT INTO BaseDeDatos VALUES ('MAQUINA1', 'User', 'Pass', 'PS2')");
+            //connector.AddQuerySQLTransaction("INSERT INTO BaseDeDatos VALUES (MAQUINA2, 'User2', 'Pass2', 'PS3')");
+            //connector.AddQuerySQLTransaction("UPDATE BaseDeDatos SET Servidor = 'MAQUINA3' WHERE Servidor = 'MAQUINA2'");
+            //connector.AddQuerySQLTransaction("DELETE BaseDeDatos WHERE Servidor = 'MAQUINA1'");
+            //bool transactions = connector.ExecuteSQLTransactions();
 
-            
+            //try
+            //{
+            //    connector.BeginTransaction();
+
+            //    connector.AddValuesQuery("Servidor", "MAQUINA1");
+            //    connector.AddValuesQuery("Usuario", "User");
+            //    connector.AddValuesQuery("Password", "Pass");
+            //    connector.AddValuesQuery("BaseDeDatos", "PS3");
+            //    connector.Insert("BaseDeDatos");
+
+            //    connector.AddValuesQuery("Servidor", "MAQUINA2");
+            //    connector.AddValuesQuery("Usuario", "User2");
+            //    connector.AddValuesQuery("Password", "Pass2");
+            //    connector.AddValuesQuery("BaseDeDatos", "PS3");
+            //    connector.Insert("BaseDeDatos");
+
+            //    //connector.AddValuesQuery("Servidor", "MAQUINA3");
+            //    //connector.AddValuesWhere("Servidor", SQLComparisonOperator.EqualTo, "MAQUINA2", "nServidor");
+            //    //connector.Update("BaseDeDatos");
+
+            //    //connector.AddValuesWhere("Servidor", SQLComparisonOperator.EqualTo, "MAQUINA1");
+            //    //connector.Delete("BaseDeDatos");
+
+            //    connector.CommitTransaction();
+            //}
+            //catch (Exception ex)
+            //{
+            //    connector.RollbackTransaction();
+            //    MessageBox.Show(ex.Message);
+            //}
 
             connector.Dispose();
         }
