@@ -189,6 +189,5 @@ namespace DBConnector
         {
             return name;
         }
-
     }
 }

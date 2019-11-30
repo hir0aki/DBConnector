@@ -40,7 +40,7 @@ namespace Tester
 
             connector.ColumnsSelect.Add("Nombre").Add("Apellido").Add("Edad").Add("FechaNac");
 
-            connector.ValuesWhere.Add("Servidor", SQLComparisonOperator.EqualTo, "127.0.0.1").Add("MAQUINA1", SQLComparisonOperator.EqualTo, "localhost");
+            connector.ValuesWhere.Add("Servidor", SQLComparisonOperator.Like, "127.0.0.1").Add("MAQUINA1", SQLComparisonOperator.EqualTo, "localhost");
 
             connector.Debug = true;
 
