@@ -51,6 +51,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Classes\ColumnsSelectCollection.cs" />
+    <Compile Include="Classes\ParametersSPCollection.cs" />
+    <Compile Include="Classes\QuerysTransactionCollection.cs" />
+    <Compile Include="Classes\Values.cs" />
+    <Compile Include="Classes\ValuesCollection.cs" />
+    <Compile Include="Classes\ValuesWhere.cs" />
+    <Compile Include="Classes\ValuesWhereCollection.cs" />
     <Compile Include="frmDebug.cs">
       <SubType>Form</SubType>
     </Compile>

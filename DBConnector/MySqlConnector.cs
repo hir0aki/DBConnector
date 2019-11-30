@@ -1,4 +1,5 @@
-﻿using MySql.Data.MySqlClient;
+﻿using DBConnector.Classes;
+using MySql.Data.MySqlClient;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -14,37 +15,48 @@ namespace DBConnector
     {
         private string _connectionString;
         private bool _activeTransaction = false;
-        private List<Values> listValuesQuery;
-        private List<Values> listParametersSP;
-        private List<ValuesWhere> listValuesWhere;
-        private List<string> listColumnsSelect;
-        private List<string> listQuerysTransaction;
+        //private List<Values> listValuesQuery;
+        //private List<Values> listParametersSP;
+        //private List<ValuesWhere> listValuesWhere;
+        //private List<string> listColumnsSelect;
+        //private List<string> listQuerysTransaction;
         private IntPtr nativeResource = Marshal.AllocHGlobal(100);
         private MySqlConnection sqlcn;
         private DataTable dataTable;
         private MySqlTransaction _sqlTransactionGlobal;
         public bool Debug { get; set; } = false;
+        public ColumnsSelectCollection ColumnsSelect { get; }
+        public ValuesWhereCollection ValuesWhere { get; }
+        public ValuesCollection Values { get; }
+        public ParametersSPCollection ParametersSP { get; }
+        public QuerysTransactionCollection QuerysTransaction { get; }
 
         public MySqlConnector(string connectionString)
         {
             _connectionString = connectionString;
             sqlcn = new MySqlConnection(_connectionString);
-            listValuesQuery = new List<Values>();
-            listParametersSP = new List<Values>();
-            listValuesWhere = new List<ValuesWhere>();
-            listColumnsSelect = new List<string>();
-            listQuerysTransaction = new List<string>();
+            //listValuesQuery = new List<Values>();
+            //listParametersSP = new List<Values>();
+            //listValuesWhere = new List<ValuesWhere>();
+            //listColumnsSelect = new List<string>();
+            //listQuerysTransaction = new List<string>();
+            ColumnsSelect = new ColumnsSelectCollection();
+            ValuesWhere = new ValuesWhereCollection();
+            Values = new ValuesCollection();
+            ParametersSP = new ParametersSPCollection();
+            QuerysTransaction = new QuerysTransactionCollection();
         }
-        public void AddColumnsSelect(string columnName)
+        ////////////////Secondary Methods
+        public IDBConnector AddColumnsSelect(string columnName)
         {
             if (string.IsNullOrEmpty(columnName?.Trim()))
             {
                 throw new Exception(Properties.Resources.exceptionParametersNullOrEmpty);
             }
-            listColumnsSelect.Add(columnName);
+            ColumnsSelect.Add(columnName);
+            return this;
         }
-
-        public void AddParameterSP(string parameterName, object value)
+        public IDBConnector AddParameterSP(string parameterName, object value)
         {
             if (string.IsNullOrEmpty(parameterName?.Trim()) || value == null)
             {
@@ -55,19 +67,19 @@ namespace DBConnector
                 Name = parameterName,
                 Value = value
             };
-            listParametersSP.Add(parameterSP);
+            ParametersSP.Add(parameterSP);
+            return this;
         }
-
-        public void AddQuerySQLTransaction(string query)
+        public IDBConnector AddQuerySQLTransaction(string query)
         {
             if (string.IsNullOrEmpty(query?.Trim()))
             {
                 throw new Exception(Properties.Resources.exceptionParametersNullOrEmpty);
             }
-            listQuerysTransaction.Add(query);
+            QuerysTransaction.Add(query);
+            return this;
         }
-
-        public void AddValuesQuery(string columnName, object value)
+        public IDBConnector AddValues(string columnName, object value)
         {
             if (string.IsNullOrEmpty(columnName?.Trim()) || value == null)
             {
@@ -78,10 +90,10 @@ namespace DBConnector
                 Name = columnName,
                 Value = value
             };
-            listValuesQuery.Add(valuesQuery);
+            Values.Add(valuesQuery);
+            return this;
         }
-
-        public void AddValuesWhere(string columnName, SQLComparisonOperator sqlComparisonOperator, object value, string parameterName = "")
+        public IDBConnector AddValuesWhere(string columnName, SQLComparisonOperator sqlComparisonOperator, object value, string parameterName = "")
         {
             if (string.IsNullOrEmpty(columnName?.Trim()) || value == null || sqlComparisonOperator == null)
             {
@@ -94,23 +106,24 @@ namespace DBConnector
                 SQLComparisonOperator = sqlComparisonOperator,
                 ParameterName = (string.IsNullOrEmpty(parameterName?.Trim()) ? columnName : parameterName)
             };
-            listValuesWhere.Add(valuesWhere);
+            ValuesWhere.Add(valuesWhere);
+            return this;
         }
-
+        ////////////////Methods
         public int Delete(string tableName)
         {
             if (string.IsNullOrEmpty(tableName?.Trim()))
             {
                 throw new Exception(Properties.Resources.exceptionParametersNullOrEmpty);
             }
-            if (listValuesWhere.Count == 0)
+            if (ValuesWhere.Count == 0)
             {
                 throw new Exception(Properties.Resources.exceptionAddValueWhere);
             }
             MySqlCommand sqlcmd = new MySqlCommand();
             sqlcmd.Connection = sqlcn;
             StringBuilder sqlQuery = new StringBuilder($"DELETE FROM {tableName} WHERE ");
-            foreach (var value in listValuesWhere)
+            foreach (var value in ValuesWhere)
             {
                 sqlQuery.Append($"{value.Name} {value.SQLComparisonOperator} @{value.ParameterName} AND ");
                 sqlcmd.Parameters.AddWithValue($"@{value.ParameterName}", value.Value);
@@ -134,7 +147,7 @@ namespace DBConnector
                     frmDebug.Dispose();
                 }
                 int rowsAff = sqlcmd.ExecuteNonQuery();
-                listValuesWhere.Clear();
+                ValuesWhere.Clear();
                 sqlcmd.Dispose();
                 if (!_activeTransaction)
                 {
@@ -144,7 +157,7 @@ namespace DBConnector
             }
             catch (Exception ex)
             {
-                listValuesWhere.Clear();
+                ValuesWhere.Clear();
                 sqlcmd.Dispose();
                 if (!_activeTransaction)
                 {
@@ -206,7 +219,7 @@ namespace DBConnector
             {
                 sqlcn.Open();
             }
-            foreach (var value in listParametersSP)
+            foreach (var value in ParametersSP)
             {
                 sqlcmd.Parameters.AddWithValue($"@{value.Name}", value.Value);
             }
@@ -219,7 +232,7 @@ namespace DBConnector
                     frmDebug.Dispose();
                 }
                 int rowsAff = sqlcmd.ExecuteNonQuery();
-                listParametersSP.Clear();
+                ParametersSP.Clear();
                 sqlcmd.Dispose();
                 if (!_activeTransaction)
                 {
@@ -229,7 +242,7 @@ namespace DBConnector
             }
             catch (Exception ex)
             {
-                listParametersSP.Clear();
+                ParametersSP.Clear();
                 sqlcmd.Dispose();
                 if (!_activeTransaction)
                 {
@@ -241,7 +254,7 @@ namespace DBConnector
 
         public bool ExecuteSQLTransactions()
         {
-            if (listQuerysTransaction.Count == 0)
+            if (QuerysTransaction.Count == 0)
             {
                 throw new Exception(Properties.Resources.exceptionAddQuerySQLTransaction);
             }
@@ -253,12 +266,12 @@ namespace DBConnector
             sqlcmd.Transaction = sqlTransaction;
             try
             {
-                foreach (string query in listQuerysTransaction)
+                foreach (string query in QuerysTransaction)
                 {
                     sqlcmd.CommandText = query;
                     sqlcmd.ExecuteNonQuery();
                 }
-                listQuerysTransaction.Clear();
+                QuerysTransaction.Clear();
                 sqlTransaction.Commit();
                 sqlTransaction.Dispose();
                 sqlcmd.Dispose();
@@ -273,13 +286,13 @@ namespace DBConnector
                 }
                 catch (Exception ex2)
                 {
-                    listQuerysTransaction.Clear();
+                    QuerysTransaction.Clear();
                     sqlTransaction.Dispose();
                     sqlcmd.Dispose();
                     sqlcn.Close();
                     throw new Exception(ex2.Message, ex2);
                 }
-                listQuerysTransaction.Clear();
+                QuerysTransaction.Clear();
                 sqlTransaction.Dispose();
                 sqlcmd.Dispose();
                 sqlcn.Close();
@@ -293,7 +306,7 @@ namespace DBConnector
             {
                 throw new Exception(Properties.Resources.exceptionParametersNullOrEmpty);
             }
-            if (listValuesQuery.Count == 0)
+            if (Values.Count == 0)
             {
                 throw new Exception(Properties.Resources.exceptionAddValueForQuery);
             }
@@ -301,7 +314,7 @@ namespace DBConnector
             sqlcmd.Connection = sqlcn;
             StringBuilder sqlQuery = new StringBuilder($"INSERT INTO {tableName} (");
             StringBuilder valuesStr = new StringBuilder(") VALUES (");
-            foreach (var value in listValuesQuery)
+            foreach (var value in Values)
             {
                 sqlQuery.Append($"{value.Name},");
                 valuesStr.Append($"@{value.Name},");
@@ -329,7 +342,7 @@ namespace DBConnector
                     frmDebug.Dispose();
                 }
                 int rowsAff = sqlcmd.ExecuteNonQuery();
-                listValuesQuery.Clear();
+                Values.Clear();
                 sqlcmd.Dispose();
                 if (!_activeTransaction)
                 {
@@ -346,7 +359,7 @@ namespace DBConnector
             }
             catch (Exception ex)
             {
-                listValuesQuery.Clear();
+                Values.Clear();
                 sqlcmd.Dispose();
                 if (!_activeTransaction)
                 {
@@ -362,7 +375,7 @@ namespace DBConnector
             {
                 throw new Exception(Properties.Resources.exceptionParametersNullOrEmpty);
             }
-            if (listValuesQuery.Count == 0)
+            if (Values.Count == 0)
             {
                 throw new Exception(Properties.Resources.exceptionAddValueForQuery);
             }
@@ -370,7 +383,7 @@ namespace DBConnector
             sqlcmd.Connection = sqlcn;
             StringBuilder sqlQuery = new StringBuilder($"INSERT INTO {tableName} (");
             StringBuilder valuesStr = new StringBuilder($") VALUES (");
-            foreach (var value in listValuesQuery)
+            foreach (var value in Values)
             {
                 sqlQuery.Append($"{value.Name},");
                 valuesStr.Append($"@{value.Name},");
@@ -398,7 +411,7 @@ namespace DBConnector
                     frmDebug.Dispose();
                 }
                 string insertedId = sqlcmd.ExecuteScalar().ToString();
-                listValuesQuery.Clear();
+                Values.Clear();
                 sqlcmd.Dispose();
                 if (!_activeTransaction)
                 {
@@ -408,7 +421,7 @@ namespace DBConnector
             }
             catch (Exception ex)
             {
-                listValuesQuery.Clear();
+                Values.Clear();
                 sqlcmd.Dispose();
                 if (!_activeTransaction)
                 {
@@ -513,10 +526,10 @@ namespace DBConnector
                     break;
             }
             sqlQuery.Append($" FROM {tableName}");
-            if (listValuesWhere.Count > 0)
+            if (ValuesWhere.Count > 0)
             {
                 sqlQuery.Append(" WHERE ");
-                foreach (var value in listValuesWhere)
+                foreach (var value in ValuesWhere)
                 {
                     sqlQuery.Append($"{value.Name} {value.SQLComparisonOperator} @{value.ParameterName} AND ");
                     sqlcmd.Parameters.AddWithValue($"@{value.ParameterName}", value.Value);
@@ -541,7 +554,7 @@ namespace DBConnector
                     frmDebug.Dispose();
                 }
                 object data = sqlcmd.ExecuteScalar();
-                listValuesWhere.Clear();
+                ValuesWhere.Clear();
                 sqlcmd.Dispose();
                 if (!_activeTransaction)
                 {
@@ -551,7 +564,7 @@ namespace DBConnector
             }
             catch (Exception ex)
             {
-                listValuesWhere.Clear();
+                ValuesWhere.Clear();
                 sqlcmd.Dispose();
                 if (!_activeTransaction)
                 {
@@ -569,7 +582,7 @@ namespace DBConnector
             }
             if (!allColumns)
             {
-                if (listColumnsSelect.Count == 0)
+                if (ColumnsSelect.Count == 0)
                 {
                     throw new Exception(Properties.Resources.exceptionAddColumnsSelect);
                 }
@@ -591,17 +604,17 @@ namespace DBConnector
             }
             else
             {
-                foreach (string column in listColumnsSelect)
+                foreach (string column in ColumnsSelect)
                 {
                     sqlQuery.Append($"{column},");
                 }
                 sqlQuery.Replace(",", string.Empty, sqlQuery.Length - 1, 1);
                 sqlQuery.Append($" FROM {tableName}");
             }
-            if (listValuesWhere.Count > 0)
+            if (ValuesWhere.Count > 0)
             {
                 sqlQuery.Append(" WHERE ");
-                foreach (var value in listValuesWhere)
+                foreach (var value in ValuesWhere)
                 {
                     //string prefix = (value.SQLComparisonOperator != SQLComparisonOperator.Like) ? "@" : string.Empty;
                     sqlQuery.Append($"{value.Name} {value.SQLComparisonOperator} @{value.ParameterName} AND ");
@@ -638,16 +651,16 @@ namespace DBConnector
                     frmDebug.Dispose();
                 }
                 sqlDataAdapter.Fill(dataTable);
-                listColumnsSelect.Clear();
-                listValuesWhere.Clear();
+                ColumnsSelect.Clear();
+                ValuesWhere.Clear();
                 sqlcmd.Dispose();
                 sqlDataAdapter.Dispose();
                 return dataTable;
             }
             catch (Exception ex)
             {
-                listColumnsSelect.Clear();
-                listValuesWhere.Clear();
+                ColumnsSelect.Clear();
+                ValuesWhere.Clear();
                 sqlcmd.Dispose();
                 sqlDataAdapter.Dispose();
                 throw new Exception(ex.Message, ex);
@@ -660,25 +673,25 @@ namespace DBConnector
             {
                 throw new Exception(Properties.Resources.exceptionParametersNullOrEmpty);
             }
-            if (listValuesQuery.Count == 0)
+            if (Values.Count == 0)
             {
                 throw new Exception(Properties.Resources.exceptionAddValueForQuery);
             }
-            if (listValuesWhere.Count == 0)
+            if (ValuesWhere.Count == 0)
             {
                 throw new Exception(Properties.Resources.exceptionAddValueWhere);
             }
             MySqlCommand sqlcmd = new MySqlCommand();
             sqlcmd.Connection = sqlcn;
             StringBuilder sqlQuery = new StringBuilder($"UPDATE {tableName} SET ");
-            foreach (var value in listValuesQuery)
+            foreach (var value in Values)
             {
                 sqlQuery.Append($"{value.Name} = @{value.Name},");
                 sqlcmd.Parameters.AddWithValue($"@{value.Name}", value.Value);
             }
             sqlQuery.Replace(",", string.Empty, sqlQuery.Length - 1, 1);
             sqlQuery.Append(" WHERE ");
-            foreach (var value in listValuesWhere)
+            foreach (var value in ValuesWhere)
             {
                 sqlQuery.Append($"{value.Name} {value.SQLComparisonOperator} @{value.ParameterName} AND ");
                 sqlcmd.Parameters.AddWithValue($"@{value.ParameterName}", value.Value);
@@ -702,8 +715,8 @@ namespace DBConnector
                     frmDebug.Dispose();
                 }
                 int rowsAff = sqlcmd.ExecuteNonQuery();
-                listValuesQuery.Clear();
-                listValuesWhere.Clear();
+                Values.Clear();
+                ValuesWhere.Clear();
                 sqlcmd.Dispose();
                 if (!_activeTransaction)
                 {
@@ -713,8 +726,8 @@ namespace DBConnector
             }
             catch (Exception ex)
             {
-                listValuesQuery.Clear();
-                listValuesWhere.Clear();
+                Values.Clear();
+                ValuesWhere.Clear();
                 sqlcmd.Dispose();
                 if (!_activeTransaction)
                 {

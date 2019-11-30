@@ -37,8 +37,17 @@ namespace Tester
                 default:
                     break;
             }
-            
+
+            connector.ColumnsSelect.Add("Nombre").Add("Apellido").Add("Edad").Add("FechaNac");
+
+            connector.ValuesWhere.Add("Servidor", SQLComparisonOperator.EqualTo, "127.0.0.1").Add("MAQUINA1", SQLComparisonOperator.EqualTo, "localhost");
+
             connector.Debug = true;
+
+            connector.AddColumnsSelect("Nombre").AddColumnsSelect("Apellido").AddColumnsSelect("Edad").AddColumnsSelect("FechaNac");
+
+            connector.AddValuesWhere("Servidor", SQLComparisonOperator.EqualTo, "127.0.0.1").AddValuesWhere("MAQUINA1", SQLComparisonOperator.EqualTo, "localhost");
+
             //int rowsAff = connector.ExecuteQuery("DELETE BaseDeDatos");
 
             //connector.AddValuesQuery("Servidor", "SERVER");
@@ -104,7 +113,7 @@ namespace Tester
 
             try
             {
-                connector.BeginTransaction();
+                //connector.BeginTransaction();
 
                 //connector.AddValuesQuery("Servidor", "MAQUINA1");
                 //connector.AddValuesQuery("Usuario", "User");
@@ -125,7 +134,7 @@ namespace Tester
                 //connector.AddValuesWhere("Servidor", SQLComparisonOperator.EqualTo, "MAQUINA1");
                 //connector.Delete("BaseDeDatos");
 
-                connector.CommitTransaction();
+                //connector.CommitTransaction();
             }
             catch (Exception ex)
             {

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DBConnector.Classes;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
@@ -10,6 +11,12 @@ namespace DBConnector
     public interface IDBConnector
     {
         //Properties
+        ColumnsSelectCollection ColumnsSelect { get; }
+        ValuesWhereCollection ValuesWhere { get; }
+        ValuesCollection Values { get; }
+        ParametersSPCollection ParametersSP { get; }
+        QuerysTransactionCollection QuerysTransaction { get; }
+
         bool Debug { get; set; }
         //Methods
         /// <summary>
@@ -91,13 +98,13 @@ namespace DBConnector
         /// </summary>
         /// <param name="columnName">Nombre de la columna</param>
         /// <param name="value">Valor de la columna</param>
-        void AddValuesQuery(string columnName, object value);
+        IDBConnector AddValues(string columnName, object value);
         /// <summary>
         /// Método para agregar los parametros del SP.
         /// </summary>
         /// <param name="parameterName">Nombre del parametro</param>
         /// <param name="value">Valor del parametro</param>
-        void AddParameterSP(string parameterName, object value);
+        IDBConnector AddParameterSP(string parameterName, object value);
         /// <summary>
         /// Método para especificar los datos a filtrar en otros métodos.
         /// </summary>
@@ -105,17 +112,17 @@ namespace DBConnector
         /// <param name="sqlComparisonOperator">Tipo de comparador</param>
         /// <param name="value">Valor de la columna</param>
         /// <param name="parameterName">Nombre del parametro (Necesario en caso de repetir el nombre de la columna)</param>
-        void AddValuesWhere(string columnName, SQLComparisonOperator sqlComparisonOperator, object value, string parameterName = "");
+        IDBConnector AddValuesWhere(string columnName, SQLComparisonOperator sqlComparisonOperator, object value, string parameterName = "");
         /// <summary>
         /// Método para agregar los nombres de las columnas para los métodos Select.
         /// </summary>
         /// <param name="columnName">Nombre de la columna</param>
-        void AddColumnsSelect(string columnName);
+        IDBConnector AddColumnsSelect(string columnName);
         /// <summary>
         /// Método para agregar los querys que se ejecutarán en el método ExecuteSQLTransactions.
         /// </summary>
         /// <param name="query">Query para ejecutar</param>
-        void AddQuerySQLTransaction(string query);
+        IDBConnector AddQuerySQLTransaction(string query);
         /// <summary>
         /// Método para hacer Dispose del objeto actual.
         /// </summary>
@@ -133,20 +140,6 @@ namespace DBConnector
         /// Método para hacer Rollback de las últimas operaciones en la BD.
         /// </summary>
         void RollbackTransaction();
-    }
-
-    public class Values
-    {
-        public string Name { get; set; }
-        public object Value { get; set; }
-    }
-
-    public class ValuesWhere
-    {
-        public string Name { get; set; }
-        public object Value { get; set; }
-        public SQLComparisonOperator SQLComparisonOperator { get; set;}
-        public string ParameterName { get; set; }
     }
 
     public enum DBConnectionType : int

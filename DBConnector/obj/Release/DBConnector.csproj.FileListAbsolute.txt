@@ -1,0 +1,14 @@
+C:\Users\Admin\source\repos\hir0aki\DBConnector\DBConnector\bin\Release\DBConnector.dll
+C:\Users\Admin\source\repos\hir0aki\DBConnector\DBConnector\bin\Release\DBConnector.pdb
+C:\Users\Admin\source\repos\hir0aki\DBConnector\DBConnector\bin\Release\MySql.Data.dll
+C:\Users\Admin\source\repos\hir0aki\DBConnector\DBConnector\bin\Release\Google.Protobuf.dll
+C:\Users\Admin\source\repos\hir0aki\DBConnector\DBConnector\bin\Release\BouncyCastle.Crypto.dll
+C:\Users\Admin\source\repos\hir0aki\DBConnector\DBConnector\bin\Release\Renci.SshNet.dll
+C:\Users\Admin\source\repos\hir0aki\DBConnector\DBConnector\bin\Release\MySql.Data.xml
+C:\Users\Admin\source\repos\hir0aki\DBConnector\DBConnector\obj\Release\DBConnector.csprojAssemblyReference.cache
+C:\Users\Admin\source\repos\hir0aki\DBConnector\DBConnector\obj\Release\DBConnector.frmDebug.resources
+C:\Users\Admin\source\repos\hir0aki\DBConnector\DBConnector\obj\Release\DBConnector.Properties.Resources.resources
+C:\Users\Admin\source\repos\hir0aki\DBConnector\DBConnector\obj\Release\DBConnector.csproj.GenerateResource.cache
+C:\Users\Admin\source\repos\hir0aki\DBConnector\DBConnector\obj\Release\DBConnector.csproj.CopyComplete
+C:\Users\Admin\source\repos\hir0aki\DBConnector\DBConnector\obj\Release\DBConnector.dll
+C:\Users\Admin\source\repos\hir0aki\DBConnector\DBConnector\obj\Release\DBConnector.pdb
