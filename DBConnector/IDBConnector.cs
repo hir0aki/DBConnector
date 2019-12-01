@@ -26,11 +26,17 @@ namespace DBConnector
         /// <returns></returns>
         int ExecuteQuery(string query);
         /// <summary>
-        /// Ejecuta el SP especificado y regresa el número de rows afectados. Para agregar parametros se necesita llamar AddParameterSP antes de ejecutar esta función.
+        /// Ejecuta el SP especificado y regresa el número de rows afectados. Para agregar parametros se necesita llamar el método Add de la colección ParametersSP antes de ejecutar esta función.
         /// </summary>
         /// <param name="spName">Nombre del SP</param>
         /// <returns></returns>
         int ExecuteSP(string spName);
+        /// <summary>
+        /// Ejecuta el SP especificado y regresa los resultados en un DataTable. Para agregar parametros se necesita llamar el método Add de la colección ParametersSP antes de ejecutar esta función.
+        /// </summary>
+        /// <param name="spName">Nombre del SP</param>
+        /// <returns></returns>
+        DataTable ExecuteSPToDataTable(string spName);
         /// <summary>
         /// Ejecuta una serie de querys como transacciones y regresa true si todos los querys se ejecutan correctamente. Los querys a ejecutar se agregan mediante el método AddQuerySQLTransaction antes de llamar el método.
         /// </summary>

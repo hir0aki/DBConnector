@@ -166,7 +166,6 @@ namespace DBConnector
                 throw new Exception(ex.Message, ex);
             }
         }
-
         public int ExecuteQuery(string query)
         {
             if (string.IsNullOrEmpty(query?.Trim()))
@@ -202,7 +201,6 @@ namespace DBConnector
                 throw new Exception(ex.Message, ex);
             }
         }
-
         public int ExecuteSP(string spName)
         {
             if (string.IsNullOrEmpty(spName?.Trim()))
@@ -251,7 +249,56 @@ namespace DBConnector
                 throw new Exception(ex.Message, ex);
             }
         }
-
+        public DataTable ExecuteSPToDataTable(string spName)
+        {
+            if (string.IsNullOrEmpty(spName?.Trim()))
+            {
+                throw new Exception(Properties.Resources.exceptionParametersNullOrEmpty);
+            }
+            MySqlCommand sqlcmd = new MySqlCommand(spName, sqlcn);
+            sqlcmd.CommandType = CommandType.StoredProcedure;
+            if (_activeTransaction)
+            {
+                sqlcmd.Transaction = _sqlTransactionGlobal;
+            }
+            else
+            {
+                sqlcn.Open();
+            }
+            foreach (var value in ParametersSP)
+            {
+                sqlcmd.Parameters.AddWithValue($"@{value.Name}", value.Value);
+            }
+            try
+            {
+                if (Debug)
+                {
+                    frmDebug frmDebug = new frmDebug(sqlcmd);
+                    DialogResult dialogResult = frmDebug.ShowDialog();
+                    frmDebug.Dispose();
+                }
+                MySqlDataReader reader = sqlcmd.ExecuteReader();
+                dataTable = new DataTable();
+                dataTable.Load(reader);
+                ParametersSP.Clear();
+                sqlcmd.Dispose();
+                if (!_activeTransaction)
+                {
+                    sqlcn.Close();
+                }
+                return dataTable;
+            }
+            catch (Exception ex)
+            {
+                ParametersSP.Clear();
+                sqlcmd.Dispose();
+                if (!_activeTransaction)
+                {
+                    sqlcn.Close();
+                }
+                throw new Exception(ex.Message, ex);
+            }
+        }
         public bool ExecuteSQLTransactions()
         {
             if (QuerysTransaction.Count == 0)
@@ -299,7 +346,6 @@ namespace DBConnector
                 throw new Exception(ex.Message, ex);
             }
         }
-
         public bool Insert(string tableName)
         {
             if (string.IsNullOrEmpty(tableName?.Trim()))
@@ -368,7 +414,6 @@ namespace DBConnector
                 throw new Exception(ex.Message, ex);
             }
         }
-
         public string InsertWithIdentityReturn(string tableName, string identityColumn)
         {
             if (string.IsNullOrEmpty(tableName?.Trim()))
@@ -430,8 +475,6 @@ namespace DBConnector
                 throw new Exception(ex.Message, ex);
             }
         }
-        
-
         public object SelectQuerySingleValue(string query)
         {
             if (string.IsNullOrEmpty(query?.Trim()))
@@ -467,7 +510,6 @@ namespace DBConnector
                 throw new Exception(ex.Message, ex);
             }
         }
-
         public DataTable SelectQueryToDataTable(string query)
         {
             if (string.IsNullOrEmpty(query?.Trim()))
@@ -491,7 +533,6 @@ namespace DBConnector
                 throw new Exception(ex.Message, ex);
             }
         }
-
         public object SelectSingleValue(string tableName, string columnName, SQLFunction sqlFunction = SQLFunction.None)
         {
             if (string.IsNullOrEmpty(tableName?.Trim()) || string.IsNullOrEmpty(columnName?.Trim()))
@@ -573,7 +614,6 @@ namespace DBConnector
                 throw new Exception(ex.Message, ex);
             }
         }
-
         public DataTable SelectToDataTable(string tableName, bool allColumns = false, int top = 0, string groupByColumnName = "", SQLOrderBy orderBy = SQLOrderBy.None, string orderByColumnName = "")
         {
             if (string.IsNullOrEmpty(tableName?.Trim()))
@@ -666,7 +706,6 @@ namespace DBConnector
                 throw new Exception(ex.Message, ex);
             }
         }
-
         public int Update(string tableName)
         {
             if (string.IsNullOrEmpty(tableName?.Trim()))
@@ -742,14 +781,12 @@ namespace DBConnector
             sqlcn.Open();
             _sqlTransactionGlobal = sqlcn.BeginTransaction();
         }
-
         public void CommitTransaction()
         {
             _activeTransaction = false;
             _sqlTransactionGlobal.Commit();
             sqlcn.Close();
         }
-
         public void RollbackTransaction()
         {
             _activeTransaction = false;
@@ -761,7 +798,6 @@ namespace DBConnector
             Dispose(true);
             GC.SuppressFinalize(this);
         }
-
         protected virtual void Dispose(bool disposing)
         {
             if (disposing)

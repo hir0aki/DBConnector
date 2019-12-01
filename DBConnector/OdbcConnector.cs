@@ -262,6 +262,63 @@ namespace DBConnector
                 throw new Exception(ex.Message, ex);
             }
         }
+        public DataTable ExecuteSPToDataTable(string spName)
+        {
+            if (string.IsNullOrEmpty(spName?.Trim()))
+            {
+                throw new Exception(Properties.Resources.exceptionParametersNullOrEmpty);
+            }
+            StringBuilder querySp = new StringBuilder("{CALL " + spName + "(");
+            foreach (var value in ParametersSP)
+            {
+                querySp.Append("?,");
+            }
+            querySp.Replace(",", string.Empty, querySp.Length - 1, 1);
+            querySp.Append(")}");
+            OdbcCommand sqlcmd = new OdbcCommand(querySp.ToString(), sqlcn);
+            sqlcmd.CommandType = CommandType.StoredProcedure;
+            if (_activeTransaction)
+            {
+                sqlcmd.Transaction = _sqlTransactionGlobal;
+            }
+            else
+            {
+                sqlcn.Open();
+            }
+            foreach (var value in ParametersSP)
+            {
+                sqlcmd.Parameters.AddWithValue($"@{value.Name}", value.Value);
+            }
+            try
+            {
+                if (Debug)
+                {
+                    frmDebug frmDebug = new frmDebug(sqlcmd);
+                    DialogResult dialogResult = frmDebug.ShowDialog();
+                    frmDebug.Dispose();
+                }
+                OdbcDataReader reader = sqlcmd.ExecuteReader();
+                dataTable = new DataTable();
+                dataTable.Load(reader);
+                ParametersSP.Clear();
+                sqlcmd.Dispose();
+                if (!_activeTransaction)
+                {
+                    sqlcn.Close();
+                }
+                return dataTable;
+            }
+            catch (Exception ex)
+            {
+                ParametersSP.Clear();
+                sqlcmd.Dispose();
+                if (!_activeTransaction)
+                {
+                    sqlcn.Close();
+                }
+                throw new Exception(ex.Message, ex);
+            }
+        }
 
         public bool ExecuteSQLTransactions()
         {
