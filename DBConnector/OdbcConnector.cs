@@ -46,74 +46,69 @@ namespace DBConnector
             ParametersSP = new ParametersSPCollection();
             QuerysTransaction = new QuerysTransactionCollection();
         }
-        public IDBConnector AddColumnsSelect(string columnName)
-        {
-            if (string.IsNullOrEmpty(columnName?.Trim()))
-            {
-                throw new Exception(Properties.Resources.exceptionParametersNullOrEmpty);
-            }
-            ColumnsSelect.Add(columnName);
-            return this;
-        }
-
-        public IDBConnector AddParameterSP(string parameterName, object value)
-        {
-            if (string.IsNullOrEmpty(parameterName?.Trim()) || value == null)
-            {
-                throw new Exception(Properties.Resources.exceptionParametersNullOrEmpty);
-            }
-            Values parameterSP = new Values
-            {
-                Name = parameterName,
-                Value = value
-            };
-            ParametersSP.Add(parameterSP);
-            return this;
-        }
-
-        public IDBConnector AddQuerySQLTransaction(string query)
-        {
-            if (string.IsNullOrEmpty(query?.Trim()))
-            {
-                throw new Exception(Properties.Resources.exceptionParametersNullOrEmpty);
-            }
-            QuerysTransaction.Add(query);
-            return this;
-        }
-
-        public IDBConnector AddValues(string columnName, object value)
-        {
-            if (string.IsNullOrEmpty(columnName?.Trim()) || value == null)
-            {
-                throw new Exception(Properties.Resources.exceptionParametersNullOrEmpty);
-            }
-            Values valuesQuery = new Values
-            {
-                Name = columnName,
-                Value = value
-            };
-            Values.Add(valuesQuery);
-            return this;
-        }
-
-        public IDBConnector AddValuesWhere(string columnName, SQLComparisonOperator sqlComparisonOperator, object value, string parameterName = "")
-        {
-            if (string.IsNullOrEmpty(columnName?.Trim()) || value == null || sqlComparisonOperator == null)
-            {
-                throw new Exception(Properties.Resources.exceptionParametersNullOrEmpty);
-            }
-            ValuesWhere valuesWhere = new ValuesWhere
-            {
-                Name = columnName,
-                Value = value,
-                SQLComparisonOperator = sqlComparisonOperator,
-                ParameterName = (string.IsNullOrEmpty(parameterName?.Trim()) ? columnName : parameterName)
-            };
-            ValuesWhere.Add(valuesWhere);
-            return this;
-        }
-
-        
+        ////////////////Secondary Methods
+        //public IDBConnector AddColumnsSelect(string columnName)
+        //{
+        //    if (string.IsNullOrEmpty(columnName?.Trim()))
+        //    {
+        //        throw new Exception(Properties.Resources.exceptionParametersNullOrEmpty);
+        //    }
+        //    ColumnsSelect.Add(columnName);
+        //    return this;
+        //}
+        //public IDBConnector AddParameterSP(string parameterName, object value)
+        //{
+        //    if (string.IsNullOrEmpty(parameterName?.Trim()) || value == null)
+        //    {
+        //        throw new Exception(Properties.Resources.exceptionParametersNullOrEmpty);
+        //    }
+        //    Values parameterSP = new Values
+        //    {
+        //        Name = parameterName,
+        //        Value = value
+        //    };
+        //    ParametersSP.Add(parameterSP);
+        //    return this;
+        //}
+        //public IDBConnector AddQuerySQLTransaction(string query)
+        //{
+        //    if (string.IsNullOrEmpty(query?.Trim()))
+        //    {
+        //        throw new Exception(Properties.Resources.exceptionParametersNullOrEmpty);
+        //    }
+        //    QuerysTransaction.Add(query);
+        //    return this;
+        //}
+        //public IDBConnector AddValues(string columnName, object value)
+        //{
+        //    if (string.IsNullOrEmpty(columnName?.Trim()) || value == null)
+        //    {
+        //        throw new Exception(Properties.Resources.exceptionParametersNullOrEmpty);
+        //    }
+        //    Values valuesQuery = new Values
+        //    {
+        //        Name = columnName,
+        //        Value = value
+        //    };
+        //    Values.Add(valuesQuery);
+        //    return this;
+        //}
+        //public IDBConnector AddValuesWhere(string columnName, SQLComparisonOperator sqlComparisonOperator, object value, string parameterName = "")
+        //{
+        //    if (string.IsNullOrEmpty(columnName?.Trim()) || value == null || sqlComparisonOperator == null)
+        //    {
+        //        throw new Exception(Properties.Resources.exceptionParametersNullOrEmpty);
+        //    }
+        //    ValuesWhere valuesWhere = new ValuesWhere
+        //    {
+        //        Name = columnName,
+        //        Value = value,
+        //        SQLComparisonOperator = sqlComparisonOperator,
+        //        ParameterName = (string.IsNullOrEmpty(parameterName?.Trim()) ? columnName : parameterName)
+        //    };
+        //    ValuesWhere.Add(valuesWhere);
+        //    return this;
+        //}
         public int Delete(string tableName)
         {
             if (string.IsNullOrEmpty(tableName?.Trim()))
@@ -170,7 +165,6 @@ namespace DBConnector
                 throw new Exception(ex.Message, ex);
             }
         }
-
         public int ExecuteQuery(string query)
         {
             if (string.IsNullOrEmpty(query?.Trim()))
@@ -206,7 +200,6 @@ namespace DBConnector
                 throw new Exception(ex.Message, ex);
             }
         }
-
         public int ExecuteSP(string spName)
         {
             if (string.IsNullOrEmpty(spName?.Trim()))
@@ -319,7 +312,6 @@ namespace DBConnector
                 throw new Exception(ex.Message, ex);
             }
         }
-
         public bool ExecuteSQLTransactions()
         {
             if (QuerysTransaction.Count == 0)
@@ -367,7 +359,6 @@ namespace DBConnector
                 throw new Exception(ex.Message, ex);
             }
         }
-
         public bool Insert(string tableName)
         {
             if (string.IsNullOrEmpty(tableName?.Trim()))
@@ -436,7 +427,6 @@ namespace DBConnector
                 throw new Exception(ex.Message, ex);
             }
         }
-
         public string InsertWithIdentityReturn(string tableName, string identityColumn)
         {
             if (string.IsNullOrEmpty(tableName?.Trim()) || string.IsNullOrEmpty(identityColumn?.Trim()))
@@ -498,7 +488,6 @@ namespace DBConnector
                 throw new Exception(ex.Message, ex);
             }
         }
-       
         public object SelectQuerySingleValue(string query)
         {
             if (string.IsNullOrEmpty(query?.Trim()))
@@ -534,7 +523,6 @@ namespace DBConnector
                 throw new Exception(ex.Message, ex);
             }
         }
-
         public DataTable SelectQueryToDataTable(string query)
         {
             if (string.IsNullOrEmpty(query?.Trim()))
@@ -558,7 +546,6 @@ namespace DBConnector
                 throw new Exception(ex.Message, ex);
             }
         }
-
         public object SelectSingleValue(string tableName, string columnName, SQLFunction sqlFunction = SQLFunction.None)
         {
             if (string.IsNullOrEmpty(tableName?.Trim()) || string.IsNullOrEmpty(columnName?.Trim()))
@@ -640,7 +627,6 @@ namespace DBConnector
                 throw new Exception(ex.Message, ex);
             }
         }
-
         public DataTable SelectToDataTable(string tableName, bool allColumns = false, int top = 0, string groupByColumnName = "", SQLOrderBy orderBy = SQLOrderBy.None, string orderByColumnName = "")
         {
             if (string.IsNullOrEmpty(tableName?.Trim()))
@@ -733,7 +719,6 @@ namespace DBConnector
                 throw new Exception(ex.Message, ex);
             }
         }
-
         public int Update(string tableName)
         {
             if (string.IsNullOrEmpty(tableName?.Trim()))
@@ -760,7 +745,7 @@ namespace DBConnector
             sqlQuery.Append(" WHERE ");
             foreach (var value in ValuesWhere)
             {
-                sqlQuery.Append($"{value.Name} {value.SQLComparisonOperator} @{value.ParameterName} AND ");
+                sqlQuery.Append($"{value.Name} {value.SQLComparisonOperator} ? AND ");
                 sqlcmd.Parameters.AddWithValue($"@{value.ParameterName}", value.Value);
             }
             sqlQuery.Replace(" AND ", string.Empty, sqlQuery.Length - 5, 5);
@@ -809,14 +794,12 @@ namespace DBConnector
             sqlcn.Open();
             _sqlTransactionGlobal = sqlcn.BeginTransaction();
         }
-
         public void CommitTransaction()
         {
             _activeTransaction = false;
             _sqlTransactionGlobal.Commit();
             sqlcn.Close();
         }
-
         public void RollbackTransaction()
         {
             _activeTransaction = false;
@@ -828,7 +811,6 @@ namespace DBConnector
             Dispose(true);
             GC.SuppressFinalize(this);
         }
-
         protected virtual void Dispose(bool disposing)
         {
             if (disposing)

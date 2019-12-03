@@ -104,13 +104,13 @@ namespace DBConnector
         /// </summary>
         /// <param name="columnName">Nombre de la columna</param>
         /// <param name="value">Valor de la columna</param>
-        IDBConnector AddValues(string columnName, object value);
+        //IDBConnector AddValues(string columnName, object value);
         /// <summary>
         /// Método para agregar los parametros del SP.
         /// </summary>
         /// <param name="parameterName">Nombre del parametro</param>
         /// <param name="value">Valor del parametro</param>
-        IDBConnector AddParameterSP(string parameterName, object value);
+        //IDBConnector AddParameterSP(string parameterName, object value);
         /// <summary>
         /// Método para especificar los datos a filtrar en otros métodos.
         /// </summary>
@@ -118,17 +118,17 @@ namespace DBConnector
         /// <param name="sqlComparisonOperator">Tipo de comparador</param>
         /// <param name="value">Valor de la columna</param>
         /// <param name="parameterName">Nombre del parametro (Necesario en caso de repetir el nombre de la columna)</param>
-        IDBConnector AddValuesWhere(string columnName, SQLComparisonOperator sqlComparisonOperator, object value, string parameterName = "");
+        //IDBConnector AddValuesWhere(string columnName, SQLComparisonOperator sqlComparisonOperator, object value, string parameterName = "");
         /// <summary>
         /// Método para agregar los nombres de las columnas para los métodos Select.
         /// </summary>
         /// <param name="columnName">Nombre de la columna</param>
-        IDBConnector AddColumnsSelect(string columnName);
+        //IDBConnector AddColumnsSelect(string columnName);
         /// <summary>
         /// Método para agregar los querys que se ejecutarán en el método ExecuteSQLTransactions.
         /// </summary>
         /// <param name="query">Query para ejecutar</param>
-        IDBConnector AddQuerySQLTransaction(string query);
+        //IDBConnector AddQuerySQLTransaction(string query);
         /// <summary>
         /// Método para hacer Dispose del objeto actual.
         /// </summary>
