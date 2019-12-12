@@ -1,12 +1,9 @@
 ﻿using DBConnector.Classes;
 using System;
-using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
-using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace DBConnector
@@ -290,7 +287,7 @@ namespace DBConnector
                 throw new Exception(ex.Message, ex);
             }
         }
-        public DataTable SelectToDataTable(string tableName, bool allColumns = false, int top = 0, string groupByColumnName = "", SQLOrderBy orderBy = SQLOrderBy.None, string orderByColumnName = "")
+        public DataTable SelectToDataTable(string tableName, bool allColumns = false, int top = 0, string groupByColumnName = "", SQLOrderBy orderBy = SQLOrderBy.None, string orderByColumnName = "", bool distinct = false)
         {
             if (string.IsNullOrEmpty(tableName?.Trim()))
             {
@@ -310,6 +307,10 @@ namespace DBConnector
             SqlCommand sqlcmd = new SqlCommand();
             sqlcmd.Connection = sqlcn;
             StringBuilder sqlQuery = new StringBuilder("SELECT ");
+            if (distinct)
+            {
+                sqlQuery.Append("DISTINCT ");
+            }
             if (top > 0)
             {
                 sqlQuery.Append($"TOP {top} ");

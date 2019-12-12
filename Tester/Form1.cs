@@ -1,12 +1,5 @@
 ﻿using DBConnector;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Tester
@@ -44,9 +37,9 @@ namespace Tester
 
             connector.Debug = true;
 
-            connector.AddColumnsSelect("Nombre").AddColumnsSelect("Apellido").AddColumnsSelect("Edad").AddColumnsSelect("FechaNac");
+            //connector.AddColumnsSelect("Nombre").AddColumnsSelect("Apellido").AddColumnsSelect("Edad").AddColumnsSelect("FechaNac");
 
-            connector.AddValuesWhere("Servidor", SQLComparisonOperator.EqualTo, "127.0.0.1").AddValuesWhere("MAQUINA1", SQLComparisonOperator.EqualTo, "localhost");
+            //connector.AddValuesWhere("Servidor", SQLComparisonOperator.EqualTo, "127.0.0.1").AddValuesWhere("MAQUINA1", SQLComparisonOperator.EqualTo, "localhost");
 
             //int rowsAff = connector.ExecuteQuery("DELETE BaseDeDatos");
 

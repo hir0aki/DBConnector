@@ -1,10 +1,6 @@
 ﻿using DBConnector.Classes;
-using System;
-using System.Collections.Generic;
 using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace DBConnector
 {
@@ -38,12 +34,12 @@ namespace DBConnector
         /// <returns></returns>
         DataTable ExecuteSPToDataTable(string spName);
         /// <summary>
-        /// Ejecuta una serie de querys como transacciones y regresa true si todos los querys se ejecutan correctamente. Los querys a ejecutar se agregan mediante el método AddQuerySQLTransaction antes de llamar el método.
+        /// Ejecuta una serie de querys como transacciones y regresa true si todos los querys se ejecutan correctamente. Los querys a ejecutar se agregan mediante el método Add de la colección QuerysTransaction.
         /// </summary>
         /// <returns></returns>
         bool ExecuteSQLTransactions();
         /// <summary>
-        /// Ejecuta un SELECT y regresa los resultados en un DataTable. Para especificar los campos a regresar necesita llamar AddColumnsSelect o pasar el parametro allColumns = true. Para filtrar los datos necesita llamar el método AddValuesWhere.
+        /// Ejecuta un SELECT y regresa los resultados en un DataTable. Para especificar los campos a regresar necesita llamar el método Add de la colección ColumnsSelect o pasar el parametro allColumns = true. Para filtrar los datos necesita llamar el método Add de la colección ValuesWhere.
         /// </summary>
         /// <param name="tableName">Nombre de la tabla a regresar</param>
         /// <param name="allColumns">Si se especifica como true, regresa todos los campos de la tabla</param>
@@ -52,7 +48,7 @@ namespace DBConnector
         /// <param name="orderBy">Método de ordenamiento</param>
         /// <param name="orderByColumnName">Nombre de las columnas para ordenar</param>
         /// <returns></returns>
-        DataTable SelectToDataTable(string tableName, bool allColumns = false, int top = 0, string groupByColumnName = "", SQLOrderBy orderBy = SQLOrderBy.None, string orderByColumnName = "");
+        DataTable SelectToDataTable(string tableName, bool allColumns = false, int top = 0, string groupByColumnName = "", SQLOrderBy orderBy = SQLOrderBy.None, string orderByColumnName = "", bool distinct = false);
         /// <summary>
         /// Regresa el query especificado en un DataTable.
         /// </summary>
@@ -74,7 +70,7 @@ namespace DBConnector
         /// <returns></returns>
         object SelectQuerySingleValue(string query);
         /// <summary>
-        /// Realiza un Insert en la tabla especificada y regresa true si se insertaron los datos. Para especificar los datos a insertar se necesita llamar el método AddValuesQuery antes de llamar esta función.
+        /// Realiza un Insert en la tabla especificada y regresa true si se insertaron los datos. Para especificar los datos a insertar se necesita llamar el método Add de la colección Values.
         /// </summary>
         /// <param name="tableName">Nombre de la tabla para realizar el Insert</param>
         /// <returns></returns>
@@ -87,13 +83,13 @@ namespace DBConnector
         /// <returns></returns>
         string InsertWithIdentityReturn(string tableName, string identityColumn);
         /// <summary>
-        /// Realiza un Update en la tabla especificada y regresa el número de rows afectados. Para especificar los campos y valores a actualizar se necesita llamar el método AddValuesQuery antes de llamar esta función. Para filtrar los datos a actualizar necesita llamar el método AddValuesWhere.
+        /// Realiza un Update en la tabla especificada y regresa el número de rows afectados. Para especificar los campos y valores a actualizar se necesita llamar el método Add de la colección Values. Para filtrar los datos a actualizar necesita llamar el método Add de la colección ValuesWhere.
         /// </summary>
         /// <param name="tableName">El nombre de tabla para realizar el Update</param>
         /// <returns></returns>
         int Update(string tableName);
         /// <summary>
-        /// Realizar un Delete en la tabla especificada y regresa el número de rows afectados. Para filtrar los datos a actualizar necesita llamar el método AddValuesWhere.
+        /// Realizar un Delete en la tabla especificada y regresa el número de rows afectados. Para filtrar los datos a eliminar necesita llamar el método Add de la colección ValuesWhere.
         /// </summary>
         /// <param name="tableName">El nombre de la tabla para realizar el Delete</param>
         /// <returns></returns>

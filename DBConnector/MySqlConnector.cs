@@ -1,12 +1,9 @@
 ﻿using DBConnector.Classes;
 using MySql.Data.MySqlClient;
 using System;
-using System.Collections.Generic;
 using System.Data;
-using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace DBConnector
@@ -614,7 +611,7 @@ namespace DBConnector
                 throw new Exception(ex.Message, ex);
             }
         }
-        public DataTable SelectToDataTable(string tableName, bool allColumns = false, int top = 0, string groupByColumnName = "", SQLOrderBy orderBy = SQLOrderBy.None, string orderByColumnName = "")
+        public DataTable SelectToDataTable(string tableName, bool allColumns = false, int top = 0, string groupByColumnName = "", SQLOrderBy orderBy = SQLOrderBy.None, string orderByColumnName = "", bool distinct = false)
         {
             if (string.IsNullOrEmpty(tableName?.Trim()))
             {
@@ -634,9 +631,9 @@ namespace DBConnector
             MySqlCommand sqlcmd = new MySqlCommand();
             sqlcmd.Connection = sqlcn;
             StringBuilder sqlQuery = new StringBuilder("SELECT ");
-            if (top > 0)
+            if (distinct)
             {
-                sqlQuery.Append($"TOP {top} ");
+                sqlQuery.Append("DISTINCT ");
             }
             if (allColumns)
             {
@@ -678,6 +675,10 @@ namespace DBConnector
                     break;
                 default:
                     break;
+            }
+            if (top > 0)
+            {
+                sqlQuery.Append($" LIMIT {top}");
             }
             sqlcmd.CommandText = sqlQuery.ToString();
             MySqlDataAdapter sqlDataAdapter = new MySqlDataAdapter(sqlcmd);
