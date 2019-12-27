@@ -61,7 +61,7 @@ namespace DBConnector.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to You need to add at least one value to method AddColumnsSelect or specify optional parameter allColumns as true.
+        ///   Looks up a localized string similar to You need to add at least one value to collection ColumnsSelect or specify optional parameter allColumns as true.
         /// </summary>
         internal static string exceptionAddColumnsSelect {
             get {
@@ -70,7 +70,7 @@ namespace DBConnector.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to You need to add at least one query to method AddQuerySQLTransaction.
+        ///   Looks up a localized string similar to You need to add at least one query to collection QuerysTransaction.
         /// </summary>
         internal static string exceptionAddQuerySQLTransaction {
             get {
@@ -79,7 +79,7 @@ namespace DBConnector.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to You need to add at least one value to method AddValuesForQuery.
+        ///   Looks up a localized string similar to You need to add at least one value to collection Values.
         /// </summary>
         internal static string exceptionAddValueForQuery {
             get {
@@ -88,7 +88,7 @@ namespace DBConnector.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to You need to add at least one value to method AddValuesWhere.
+        ///   Looks up a localized string similar to You need to add at least one value to collection ValuesWhere.
         /// </summary>
         internal static string exceptionAddValueWhere {
             get {

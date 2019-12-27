@@ -89,11 +89,12 @@ namespace DBConnector
         /// <returns></returns>
         int Update(string tableName);
         /// <summary>
-        /// Realizar un Delete en la tabla especificada y regresa el número de rows afectados. Para filtrar los datos a eliminar necesita llamar el método Add de la colección ValuesWhere.
+        /// Realizar un Delete en la tabla especificada y regresa el número de rows afectados. Para filtrar los datos a eliminar necesita llamar el método Add de la colección ValuesWhere. Para borrar todos los datos de la tabla es necesario pasar el parametro opcional allRows = true.
         /// </summary>
         /// <param name="tableName">El nombre de la tabla para realizar el Delete</param>
+        /// <param name="allRows">Parametro opcional para eliminar todos los datos de la tabla sin necesidad de especificar un valor WHERE</param>
         /// <returns></returns>
-        int Delete(string tableName);
+        int Delete(string tableName, bool allRows = false);
         //Secondary Methods
         /// <summary>
         /// Método para agregar los valores que son usado por otros métodos.

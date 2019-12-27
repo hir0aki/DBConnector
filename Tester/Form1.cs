@@ -14,7 +14,7 @@ namespace Tester
 
         private void button1_Click(object sender, EventArgs e)
         {
-            DBConnectionType dBConnectionType = DBConnectionType.MySql;
+            DBConnectionType dBConnectionType = DBConnectionType.ODBCSql;
 
             switch (dBConnectionType)
             {
@@ -31,9 +31,9 @@ namespace Tester
                     break;
             }
 
-            connector.ColumnsSelect.Add("Nombre").Add("Apellido").Add("Edad").Add("FechaNac");
+            //connector.ColumnsSelect.Add("Nombre").Add("Apellido").Add("Edad").Add("FechaNac");
 
-            connector.ValuesWhere.Add("Servidor", SQLComparisonOperator.Like, "127.0.0.1").Add("MAQUINA1", SQLComparisonOperator.EqualTo, "localhost");
+            //connector.ValuesWhere.Add("Servidor", SQLComparisonOperator.Like, "127.0.0.1").Add("MAQUINA1", SQLComparisonOperator.EqualTo, "localhost");
 
             connector.Debug = true;
 
@@ -125,13 +125,13 @@ namespace Tester
                 //connector.Update("BaseDeDatos");
 
                 //connector.AddValuesWhere("Servidor", SQLComparisonOperator.EqualTo, "MAQUINA1");
-                //connector.Delete("BaseDeDatos");
+                connector.Delete("BaseDeDatos", true);
 
                 //connector.CommitTransaction();
             }
             catch (Exception ex)
             {
-                connector.RollbackTransaction();
+                //connector.RollbackTransaction();
                 MessageBox.Show(ex.Message);
             }
 

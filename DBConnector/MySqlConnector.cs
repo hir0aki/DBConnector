@@ -107,25 +107,36 @@ namespace DBConnector
         //    return this;
         //}
         ////////////////Methods
-        public int Delete(string tableName)
+        public int Delete(string tableName, bool allRows = false)
         {
             if (string.IsNullOrEmpty(tableName?.Trim()))
             {
                 throw new Exception(Properties.Resources.exceptionParametersNullOrEmpty);
             }
-            if (ValuesWhere.Count == 0)
+            if (!allRows)
             {
-                throw new Exception(Properties.Resources.exceptionAddValueWhere);
+                if (ValuesWhere.Count == 0)
+                {
+                    throw new Exception(Properties.Resources.exceptionAddValueWhere);
+                }
             }
             MySqlCommand sqlcmd = new MySqlCommand();
             sqlcmd.Connection = sqlcn;
-            StringBuilder sqlQuery = new StringBuilder($"DELETE FROM {tableName} WHERE ");
-            foreach (var value in ValuesWhere)
+            StringBuilder sqlQuery = new StringBuilder();
+            if (!allRows)
             {
-                sqlQuery.Append($"{value.Name} {value.SQLComparisonOperator} @{value.ParameterName} AND ");
-                sqlcmd.Parameters.AddWithValue($"@{value.ParameterName}", value.Value);
+                sqlQuery.Append($"DELETE FROM {tableName} WHERE ");
+                foreach (var value in ValuesWhere)
+                {
+                    sqlQuery.Append($"{value.Name} {value.SQLComparisonOperator} @{value.ParameterName} AND ");
+                    sqlcmd.Parameters.AddWithValue($"@{value.ParameterName}", value.Value);
+                }
+                sqlQuery.Replace(" AND ", string.Empty, sqlQuery.Length - 5, 5);
             }
-            sqlQuery.Replace(" AND ", string.Empty, sqlQuery.Length - 5, 5);
+            else
+            {
+                sqlQuery.Append($"TRUNCATE TABLE {tableName}");
+            }
             sqlcmd.CommandText = sqlQuery.ToString();
             if (_activeTransaction)
             {
