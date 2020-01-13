@@ -802,6 +802,14 @@ namespace DBConnector
             _sqlTransactionGlobal.Rollback();
             sqlcn.Close();
         }
+        public void CleanValues()
+        {
+            ColumnsSelect.Clear();
+            ValuesWhere.Clear();
+            Values.Clear();
+            ParametersSP.Clear();
+            QuerysTransaction.Clear();
+        }
         public void Dispose()
         {
             Dispose(true);

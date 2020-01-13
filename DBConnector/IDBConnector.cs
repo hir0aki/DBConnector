@@ -143,6 +143,10 @@ namespace DBConnector
         /// Método para hacer Rollback de las últimas operaciones en la BD.
         /// </summary>
         void RollbackTransaction();
+        /// <summary>
+        /// Método para limpiar los valores de todas las colecciones.
+        /// </summary>
+        void CleanValues();
     }
 
     public enum DBConnectionType : int
