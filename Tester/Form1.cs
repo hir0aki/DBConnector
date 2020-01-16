@@ -96,7 +96,7 @@ namespace Tester
             //connector.AddParameterSP("fechaInicio", DateTime.Now);
             //connector.AddParameterSP("fechaFinal", DateTime.Now);
             //connector.AddParameterSP("turno", 1);
-            //int rowsAff = connector.ExecuteSP("sp_CorteHistorico");
+            int rowsAff = connector.ExecuteSP("sp_CorteHistorico");
 
             //connector.AddQuerySQLTransaction("INSERT INTO BaseDeDatos VALUES ('MAQUINA1', 'User', 'Pass', 'PS2')");
             //connector.AddQuerySQLTransaction("INSERT INTO BaseDeDatos VALUES (MAQUINA2, 'User2', 'Pass2', 'PS3')");
@@ -125,7 +125,7 @@ namespace Tester
                 //connector.Update("BaseDeDatos");
 
                 //connector.AddValuesWhere("Servidor", SQLComparisonOperator.EqualTo, "MAQUINA1");
-                connector.Delete("BaseDeDatos", true);
+                //connector.Delete("BaseDeDatos", true);
 
                 //connector.CommitTransaction();
             }

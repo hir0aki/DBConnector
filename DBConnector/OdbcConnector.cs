@@ -211,12 +211,20 @@ namespace DBConnector
                 throw new Exception(Properties.Resources.exceptionParametersNullOrEmpty);
             }
             StringBuilder querySp = new StringBuilder("{CALL " + spName + "(");
-            foreach (var value in ParametersSP)
+            if (ParametersSP.Count > 0)
             {
-                querySp.Append("?,");
+                foreach (var _ in ParametersSP)
+                {
+                    querySp.Append("?,");
+                }
+                querySp.Replace(",", string.Empty, querySp.Length - 1, 1);
+                querySp.Append(")}");
             }
-            querySp.Replace(",", string.Empty, querySp.Length - 1, 1);
-            querySp.Append(")}");
+            else
+            {
+                querySp.Replace("(", string.Empty, querySp.Length - 1, 1);
+                querySp.Append("}");
+            }
             OdbcCommand sqlcmd = new OdbcCommand(querySp.ToString(), sqlcn);
             sqlcmd.CommandType = CommandType.StoredProcedure;
             if (_activeTransaction)
@@ -266,12 +274,20 @@ namespace DBConnector
                 throw new Exception(Properties.Resources.exceptionParametersNullOrEmpty);
             }
             StringBuilder querySp = new StringBuilder("{CALL " + spName + "(");
-            foreach (var value in ParametersSP)
+            if (ParametersSP.Count > 0)
             {
-                querySp.Append("?,");
+                foreach (var _ in ParametersSP)
+                {
+                    querySp.Append("?,");
+                }
+                querySp.Replace(",", string.Empty, querySp.Length - 1, 1);
+                querySp.Append(")}");
             }
-            querySp.Replace(",", string.Empty, querySp.Length - 1, 1);
-            querySp.Append(")}");
+            else
+            {
+                querySp.Replace("(", string.Empty, querySp.Length - 1, 1);
+                querySp.Append("}");
+            }
             OdbcCommand sqlcmd = new OdbcCommand(querySp.ToString(), sqlcn);
             sqlcmd.CommandType = CommandType.StoredProcedure;
             if (_activeTransaction)
