@@ -12,11 +12,6 @@ namespace DBConnector
     {
         private string _connectionString;
         private bool _activeTransaction = false;
-        //private List<Values> listValuesQuery;
-        //private List<Values> listParametersSP;
-        //private List<ValuesWhere> listValuesWhere;
-        //private List<string> listColumnsSelect;
-        //private List<string> listQuerysTransaction;
         private IntPtr nativeResource = Marshal.AllocHGlobal(100);
         private OdbcConnection sqlcn;
         private DataTable dataTable;
@@ -32,80 +27,13 @@ namespace DBConnector
         {
             _connectionString = connectionString;
             sqlcn = new OdbcConnection(_connectionString);
-            //listValuesQuery = new List<Values>();
-            //listParametersSP = new List<Values>();
-            //listValuesWhere = new List<ValuesWhere>();
-            //listColumnsSelect = new List<string>();
-            //listQuerysTransaction = new List<string>();
             ColumnsSelect = new ColumnsSelectCollection();
             ValuesWhere = new ValuesWhereCollection();
             Values = new ValuesCollection();
             ParametersSP = new ParametersSPCollection();
             QuerysTransaction = new QuerysTransactionCollection();
         }
-        ////////////////Secondary Methods
-        //public IDBConnector AddColumnsSelect(string columnName)
-        //{
-        //    if (string.IsNullOrEmpty(columnName?.Trim()))
-        //    {
-        //        throw new Exception(Properties.Resources.exceptionParametersNullOrEmpty);
-        //    }
-        //    ColumnsSelect.Add(columnName);
-        //    return this;
-        //}
-        //public IDBConnector AddParameterSP(string parameterName, object value)
-        //{
-        //    if (string.IsNullOrEmpty(parameterName?.Trim()) || value == null)
-        //    {
-        //        throw new Exception(Properties.Resources.exceptionParametersNullOrEmpty);
-        //    }
-        //    Values parameterSP = new Values
-        //    {
-        //        Name = parameterName,
-        //        Value = value
-        //    };
-        //    ParametersSP.Add(parameterSP);
-        //    return this;
-        //}
-        //public IDBConnector AddQuerySQLTransaction(string query)
-        //{
-        //    if (string.IsNullOrEmpty(query?.Trim()))
-        //    {
-        //        throw new Exception(Properties.Resources.exceptionParametersNullOrEmpty);
-        //    }
-        //    QuerysTransaction.Add(query);
-        //    return this;
-        //}
-        //public IDBConnector AddValues(string columnName, object value)
-        //{
-        //    if (string.IsNullOrEmpty(columnName?.Trim()) || value == null)
-        //    {
-        //        throw new Exception(Properties.Resources.exceptionParametersNullOrEmpty);
-        //    }
-        //    Values valuesQuery = new Values
-        //    {
-        //        Name = columnName,
-        //        Value = value
-        //    };
-        //    Values.Add(valuesQuery);
-        //    return this;
-        //}
-        //public IDBConnector AddValuesWhere(string columnName, SQLComparisonOperator sqlComparisonOperator, object value, string parameterName = "")
-        //{
-        //    if (string.IsNullOrEmpty(columnName?.Trim()) || value == null || sqlComparisonOperator == null)
-        //    {
-        //        throw new Exception(Properties.Resources.exceptionParametersNullOrEmpty);
-        //    }
-        //    ValuesWhere valuesWhere = new ValuesWhere
-        //    {
-        //        Name = columnName,
-        //        Value = value,
-        //        SQLComparisonOperator = sqlComparisonOperator,
-        //        ParameterName = (string.IsNullOrEmpty(parameterName?.Trim()) ? columnName : parameterName)
-        //    };
-        //    ValuesWhere.Add(valuesWhere);
-        //    return this;
-        //}
+
         public int Delete(string tableName, bool allRows = false)
         {
             if (string.IsNullOrEmpty(tableName?.Trim()))

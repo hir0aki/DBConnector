@@ -27,3 +27,4 @@ C:\Users\Admin\source\repos\hir0aki\DBConnector\Tester\bin\Debug\Google.Protobuf
 C:\Users\Admin\source\repos\hir0aki\DBConnector\Tester\bin\Debug\BouncyCastle.Crypto.dll
 C:\Users\Admin\source\repos\hir0aki\DBConnector\Tester\bin\Debug\Renci.SshNet.dll
 C:\Users\Admin\source\repos\hir0aki\DBConnector\Tester\bin\Debug\MySql.Data.xml
+C:\Users\Admin\source\repos\hir0aki\DBConnector\Tester\bin\Debug\FirebirdSql.Data.FirebirdClient.dll
