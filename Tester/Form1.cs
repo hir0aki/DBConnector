@@ -1,12 +1,14 @@
 ﻿using DBConnector;
 using System;
+using System.Data;
 using System.Windows.Forms;
 
 namespace Tester
 {
     public partial class Form1 : Form
     {
-        IDBConnector connector;
+        private IDBConnector connector;
+
         public Form1()
         {
             InitializeComponent();
@@ -14,9 +16,7 @@ namespace Tester
 
         private void button1_Click(object sender, EventArgs e)
         {
-            DBConnectionType dBConnectionType = DBConnectionType.ODBCSql;
-
-            switch (dBConnectionType)
+            switch (DBConnectionType.SQLServer)
             {
                 case DBConnectionType.SQLServer:
                     connector = new MSSQLServerConnector("Server=127.0.0.1;Database=PS2;User Id=ps2;Password=;");
@@ -27,15 +27,27 @@ namespace Tester
                 case DBConnectionType.MySql:
                     connector = new MySqlConnector("Server=127.0.0.1;Database=ps3;Uid=ps3;Pwd=Seccionr3d;");
                     break;
-                default:
+                case DBConnectionType.Firebird:
+                    connector = new FirebirdConnector("database=localhost:demo.fdb;user=sysdba;password=masterkey");
+                    break;
+                case DBConnectionType.OLEDB:
+                    connector = new OLEDBConnector(@"Provider=Microsoft.ACE.OLEDB.12.0;Data Source=C:\Users\Admin\Desktop\navalbello_4marzo2021.mdb");
                     break;
             }
+
+            //DateTime fecha1 = new DateTime(2017, 1, 1, 0, 0, 0);
+            //DateTime fecha2 = new DateTime(2027, 1, 1, 0, 0, 0);
+
+            //connector.ValuesWhere.Add("Fecha", SQLComparisonOperator.GreaterThanOrEqualTo, fecha1).Add("Fecha", SQLComparisonOperator.LessThanOrEqualTo, fecha2, "fecha2");
+            //DataTable table = connector.SelectToDataTable("tbl_Cargas_Comb_Mixtas", true);
+
+            //int rows = table.Rows.Count;
 
             //connector.ColumnsSelect.Add("Nombre").Add("Apellido").Add("Edad").Add("FechaNac");
 
             //connector.ValuesWhere.Add("Servidor", SQLComparisonOperator.Like, "127.0.0.1").Add("MAQUINA1", SQLComparisonOperator.EqualTo, "localhost");
 
-            connector.Debug = true;
+            //connector.Debug = true;
 
             //connector.AddColumnsSelect("Nombre").AddColumnsSelect("Apellido").AddColumnsSelect("Edad").AddColumnsSelect("FechaNac");
 
@@ -96,17 +108,16 @@ namespace Tester
             //connector.AddParameterSP("fechaInicio", DateTime.Now);
             //connector.AddParameterSP("fechaFinal", DateTime.Now);
             //connector.AddParameterSP("turno", 1);
-            int rowsAff = connector.ExecuteSP("sp_CorteHistorico");
+            //int rowsAff = connector.ExecuteSP("sp_CorteHistorico");
 
             //connector.AddQuerySQLTransaction("INSERT INTO BaseDeDatos VALUES ('MAQUINA1', 'User', 'Pass', 'PS2')");
             //connector.AddQuerySQLTransaction("INSERT INTO BaseDeDatos VALUES (MAQUINA2, 'User2', 'Pass2', 'PS3')");
             //connector.AddQuerySQLTransaction("UPDATE BaseDeDatos SET Servidor = 'MAQUINA3' WHERE Servidor = 'MAQUINA2'");
             //connector.AddQuerySQLTransaction("DELETE BaseDeDatos WHERE Servidor = 'MAQUINA1'");
             //bool transactions = connector.ExecuteSQLTransactions();
-
             try
             {
-                //connector.BeginTransaction();
+                connector.BeginTransaction();
 
                 //connector.AddValuesQuery("Servidor", "MAQUINA1");
                 //connector.AddValuesQuery("Usuario", "User");
@@ -127,16 +138,18 @@ namespace Tester
                 //connector.AddValuesWhere("Servidor", SQLComparisonOperator.EqualTo, "MAQUINA1");
                 //connector.Delete("BaseDeDatos", true);
 
-                //connector.CommitTransaction();
+                //DataTable tableFact = connector.SelectQueryToDataTable("select * from Facturas");
+                var data2 = connector.SelectSingleValue("Facturas", "Cliente", SQLFunction.MAX);
+
+                connector.CommitTransaction();
             }
             catch (Exception ex)
             {
-                //connector.RollbackTransaction();
+                connector.RollbackTransaction();
                 MessageBox.Show(ex.Message);
             }
 
             connector.Dispose();
         }
-
     }
 }

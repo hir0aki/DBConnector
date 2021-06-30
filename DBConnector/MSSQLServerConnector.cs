@@ -237,6 +237,10 @@ namespace DBConnector
             }
             SqlCommand sqlcmd = new SqlCommand();
             sqlcmd.Connection = sqlcn;
+            if (_activeTransaction)
+            {
+                sqlcmd.Transaction = _sqlTransactionGlobal;
+            }
             StringBuilder sqlQuery = new StringBuilder("SELECT ");
             if (distinct)
             {
@@ -288,6 +292,8 @@ namespace DBConnector
                     break;
             }
             sqlcmd.CommandText = sqlQuery.ToString();
+            
+
             SqlDataAdapter sqlDataAdapter = new SqlDataAdapter(sqlcmd);
             dataTable = new DataTable();
             try
@@ -321,6 +327,10 @@ namespace DBConnector
                 throw new Exception(Properties.Resources.exceptionParametersNullOrEmpty);
             }
             SqlCommand sqlcmd = new SqlCommand(query, sqlcn);
+            if (_activeTransaction)
+            {
+                sqlcmd.Transaction = _sqlTransactionGlobal;
+            }
             SqlDataAdapter sqlDataAdapter = new SqlDataAdapter(sqlcmd);
             dataTable = new DataTable();
             try
@@ -345,6 +355,10 @@ namespace DBConnector
             }
             SqlCommand sqlcmd = new SqlCommand();
             sqlcmd.Connection = sqlcn;
+            if (_activeTransaction)
+            {
+                sqlcmd.Transaction = _sqlTransactionGlobal;
+            }
             StringBuilder sqlQuery = new StringBuilder("SELECT ");
             switch (sqlFunction)
             {

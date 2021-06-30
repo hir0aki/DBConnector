@@ -153,8 +153,10 @@ namespace DBConnector
     {
         SQLServer = 0,
         ODBCSql = 1,
-        MySql = 2
-    };
+        MySql = 2,
+        Firebird = 3,
+        OLEDB = 4
+    }
 
     public enum SQLFunction : int
     {
